@@ -10,6 +10,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mysql": "^2.18.1"
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "express-rate-limit": "^5.5.1",
+    "helmet": "^4.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.4",
+    "mysql": "^2.18.1",
+    "password-validator": "^5.2.1",
+    "xss-clean": "^0.1.1"
   }
 }

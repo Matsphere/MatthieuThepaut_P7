@@ -8,10 +8,11 @@ const PublicationsCtrl = require("../controllers/publications");
 const CommentsCtrl = require("../controllers/comments");
 
 router.get("/", auth, PublicationsCtrl.getAllPublicationss);
+router.get("/:id", auth, PublicationsCtrl.getOnePublication);
 router.post("/", auth, multer, PublicationsCtrl.createPublication);
 router.put("/:id", auth, multer, PublicationsCtrl.modifyPublication);
 router.delete("/:id", auth, PublicationsCtrl.deletePublication);
-router.post("/:id/like", auth, PublicationsCtrl.feedback);
-router.post("/:id/comment", auth, CommentsCtrl.createComment);
+// router.post("/:id/like", auth, PublicationsCtrl.feedback);
+// router.post("/:id/comment", auth, CommentsCtrl.createComment);
 
 module.exports = router;
