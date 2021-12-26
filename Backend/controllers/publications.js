@@ -5,7 +5,8 @@ dotenv.config();
 
 exports.getAllPublications = async (req, res, next) => {
   try {
-    await connection.query(`SELECT * FROM publications`, (err, result) => {
+    const sql = `SELECT * FROM publications`;
+    await connection.query(sql, (err, result) => {
       if (err) throw err;
 
       res.status(200).json(result);
@@ -17,14 +18,12 @@ exports.getAllPublications = async (req, res, next) => {
 
 exports.getOnePublication = async (req, res, next) => {
   try {
-    await connection.query(
-      `SELECT * FROM publications WHERE id===req.parmas.id`,
-      (err, result) => {
-        if (err) throw err;
+    const sql = `SELECT * FROM publications WHERE id = ?`;
+    await connection.query(sql, [req.params.id], (err, result) => {
+      if (err) throw err;
 
-        res.status(200).json(result);
-      }
-    );
+      res.status(200).json(result);
+    });
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -32,8 +31,10 @@ exports.getOnePublication = async (req, res, next) => {
 
 exports.createPublication = async (req, res, next) => {
   try {
+    const sql = `INSERT INTO publications (author_id, text, date) VALUES (?, ?, ?)`;
     await connection.query(
-      `INSERT INTO publications (author_id, text, date) VALUES (req.body.userId, req.body.text, Date.now())`,
+      sql,
+      [req.body.userId, req.body.text, Date.now()],
       (err) => {
         if (err) throw err;
 
@@ -47,14 +48,12 @@ exports.createPublication = async (req, res, next) => {
 
 exports.modifyPublication = async (req, res, next) => {
   try {
-    await connection.query(
-      `UPDATE publications SET text = req.body.text WHERE id === req.params.id`,
-      (err) => {
-        if (err) throw err;
+    const sql = `UPDATE publications SET text = ? WHERE id = ?`;
+    await connection.query(sql, [req.body.text, req.params.id], (err) => {
+      if (err) throw err;
 
-        res.status(200).json({ message: "Publication modifiée" });
-      }
-    );
+      res.status(200).json({ message: "Publication modifiée" });
+    });
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -62,14 +61,12 @@ exports.modifyPublication = async (req, res, next) => {
 
 exports.deletePublication = async (req, res, next) => {
   try {
-    await connection.query(
-      `DELETE FROM publications  WHERE id === req.params.id`,
-      (err) => {
-        if (err) throw err;
+    const sql = `DELETE FROM publications  WHERE id = ?`;
+    await connection.query(sql, [req.params.id], (err) => {
+      if (err) throw err;
 
-        res.status(200).json({ message: "Publication supprimée" });
-      }
-    );
+      res.status(200).json({ message: "Publication supprimée" });
+    });
   } catch (err) {
     res.status(400).json({ err });
   }

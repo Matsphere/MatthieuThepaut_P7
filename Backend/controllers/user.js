@@ -29,8 +29,8 @@ exports.signup = async (req, res, next) => {
       );
 
     const hash = await bcrypt.hash(req.body.password, 10);
-    await connection.query(
-      `INSERT INTO users (email, password) VALUES (req.body.email, hash)`,
+    const sql = `INSERT INTO users (email, password) VALUES (?, ?)`;
+    await connection.query(sql, [req.body.email, hash],
       (err) => {
         if (err) throw err;
 
@@ -43,8 +43,9 @@ exports.signup = async (req, res, next) => {
 };
 exports.login = async (req, res, next) => {
   try {
+    const sql = `SELECT * FROM users WHERE email = ?`;
     await connection.query(
-      `SELECT * FROM users WHERE email===req.body.email`,
+      sql, [req.body.email],
       (err, result) => {
         if (err) throw err;
         if (!result)
