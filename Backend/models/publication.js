@@ -7,7 +7,7 @@ const publications = `CREATE TABLE IF NOT EXISTS publications (
     likes INT DEFAULT 0,
     dislikes INT DEFAULT 0,
     users_liked JSON,
-    users_disliked JSON,
+    users_disliked JSON
 )`;
 
 connection.query(publications, (err) => {
