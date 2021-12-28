@@ -1,8 +1,8 @@
 const express = require("express");
 const mysql = require("mysql");
 const connection = require("./db");
-// const PublicationsRoutes = require("./routes/publications");
-// const userRoutes = require("./routes/user");
+const PublicationsRoutes = require("./routes/publications");
+const userRoutes = require("./routes/user");
 // const path = require("path");
 // const helmet = require("helmet");
 // const morgan = require("morgan");
@@ -32,9 +32,9 @@ app.use((req, res, next) => {
 // app.use(morgan("tiny"));
 // app.use(helmet());
 // app.use(clean());
-// app.use(express.json());
-// app.use("/api/publications", PublicationsRoutes);
-// app.use("/api/auth", userRoutes);
-// app.use("/images", express.static(path.join(__dirname, "images")));
+app.use(express.json());
+app.use("/api/publications", PublicationsRoutes);
+app.use("/api/auth", userRoutes);
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;

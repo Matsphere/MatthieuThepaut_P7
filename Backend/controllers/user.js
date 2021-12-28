@@ -30,13 +30,11 @@ exports.signup = async (req, res, next) => {
 
     const hash = await bcrypt.hash(req.body.password, 10);
     const sql = `INSERT INTO users (email, password) VALUES (?, ?)`;
-    await connection.query(sql, [req.body.email, hash],
-      (err) => {
-        if (err) throw err;
+    await connection.query(sql, [req.body.email, hash], (err) => {
+      if (err) throw err;
 
-        res.status(200).json({ message: "Compte créé" });
-      }
-    );
+      res.status(200).json({ message: "Compte créé" });
+    });
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -44,27 +42,23 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const sql = `SELECT * FROM users WHERE email = ?`;
-    await connection.query(
-      sql, [req.body.email],
-      (err, result) => {
-        if (err) throw err;
-        if (!result)
-          res.status(404).json({ message: "Utilisateur non trouvé!" });
-        const valid = await bcrypt.compare(
-          req.body.password,
-          result[0].password
-        );
-        if (!valid) {
-          return res.status(401).json({ message: "Mot de passe incorrect !" });
-        }
-        res.status(200).json({
-          userId: result[0].id,
-          token: jwt.sign({ userId: result[0].id }, "RANDOM_TOKEN_SECRET", {
-            expiresIn: "24h",
-          }),
-        });
+    await connection.query(sql, [req.body.email], (err, result) => {
+      if (err) throw err;
+      if (!result)
+        return res.status(404).json({ message: "Utilisateur non trouvé!" });
+      // const valid = await bcrypt.compare(
+      //   req.body.password,
+      //   result[0].password
+      // );
+      //
+      if (req.body.password !== result[0].password) {
+        return res.status(401).json({ message: "Mot de passe incorrect !" });
       }
-    );
+      const token = jwt.sign({ userId: result[0].id }, "RANDOM_TOKEN_SECRET", {
+        expiresIn: "24h",
+      });
+      return res.status(200).json({ user: result[0] }).cookie("token", token);
+    });
   } catch (err) {
     res.status(err.statusCode).json({ err });
   }
