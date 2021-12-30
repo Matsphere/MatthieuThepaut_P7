@@ -43,6 +43,7 @@ exports.login = async (req, res, next) => {
   try {
     const sql = `SELECT * FROM users WHERE email = ?`;
     await connection.query(sql, [req.body.email], (err, result) => {
+      console.log(result);
       if (err) throw err;
       if (!result)
         return res.status(404).json({ message: "Utilisateur non trouvé!" });
@@ -51,13 +52,16 @@ exports.login = async (req, res, next) => {
       //   result[0].password
       // );
       //
-      if (req.body.password !== result[0].password) {
+      if (req.body.password !== result.password) {
         return res.status(401).json({ message: "Mot de passe incorrect !" });
       }
-      const token = jwt.sign({ userId: result[0].id }, "RANDOM_TOKEN_SECRET", {
+      const token = jwt.sign({ userId: result.id }, "RANDOM_TOKEN_SECRET", {
         expiresIn: "24h",
       });
-      return res.status(200).json({ user: result[0] }).cookie("token", token);
+      res.cookie("token", token);
+      res.json({ user: result });
+
+      return res.status(200);
     });
   } catch (err) {
     res.status(err.statusCode).json({ err });

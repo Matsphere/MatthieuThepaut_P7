@@ -9,6 +9,11 @@ exports.getAllPublications = async (req, res, next) => {
     await connection.query(sql, (err, result) => {
       if (err) throw err;
 
+      result.forEach((el) => {
+        if (el.image_url)
+          el.image_url = process.env.URL + process.env.DIR + el.image_url;
+      });
+
       res.status(200).json(result);
     });
   } catch (err) {
@@ -22,6 +27,9 @@ exports.getOnePublication = async (req, res, next) => {
     await connection.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
 
+      if (result.image_url)
+        result.image_url = process.env.URL + process.env.DIR + result.image_url;
+
       res.status(200).json(result);
     });
   } catch (err) {
@@ -31,12 +39,16 @@ exports.getOnePublication = async (req, res, next) => {
 
 exports.createPublication = async (req, res, next) => {
   try {
-    const sql = `INSERT INTO publications (author_id, text, date) VALUES (?, ?, NOW())`;
-    await connection.query(sql, [req.body.userId, req.body.text], (err) => {
-      if (err) throw err;
+    const sql = `INSERT INTO publications (author_id, text, date, image_url) VALUES (?, ?, DATE_FORMAT(CURDATE(), ${"%d/%m/%%y"}, ?)`;
+    await connection.query(
+      sql,
+      [req.body.userId, req.body.text, req.file ? req.file.filename : ""],
+      (err) => {
+        if (err) throw err;
 
-      res.status(200).json({ message: "Publication créée" });
-    });
+        res.status(200).json({ message: "Publication créée" });
+      }
+    );
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -65,5 +77,34 @@ exports.deletePublication = async (req, res, next) => {
     });
   } catch (err) {
     res.status(400).json({ err });
+  }
+};
+
+exports.feedback = async (req, res, next) => {
+  try {
+    const data = {
+      userId = req.body.userId,
+      vote = req.body.vote,
+    }
+
+    const sql = `SELECT EXISTS(SELECT * from reactions WHERE pub_id=? AND voter_id = ?)`;
+    await connection.query(sql, [req.params.id, data.userId], (err,result) =>{
+      if (err) throw err;
+      if (result) {
+        const sql = `UPDATE reactions SET vote = ? WHERE pub_id = ? AND voter_id = ?`
+        await connection.query(sql, [data.vote, req.params.id, data.userId ], (err) => {
+          if (err) throw err;
+        })
+      } else {
+        const sql = `INSERT INTO reactions (voter_id, pub_id, vote) VALUES (?, ?, ?)`
+        await connection.query(sql, [data.userId, req.params.id, data.vote ], (err) => {
+          if (err) throw err;
+        })
+
+      }
+    })
+    
+  } catch (err) {
+    res.status(err.statusCode).json({ err });
   }
 };

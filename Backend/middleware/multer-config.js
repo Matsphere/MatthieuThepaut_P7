@@ -7,10 +7,10 @@ const MIME_TYPES = {
 };
 
 const imageFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
+  if (file.mimetype.startsWith("image") && MIME_TYPES[file.mimetype]) {
     cb(null, true);
   } else {
-    return cb("Fichiers image seulement", false);
+    return cb("Fichiers image jpg, jpeg, png seulement", false);
   }
 };
 
