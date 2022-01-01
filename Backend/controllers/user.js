@@ -86,17 +86,18 @@ exports.login = async (req, res, next) => {
 
 exports.editInfo = async (req, res, next) => {
   try {
+    const data = {
+      pseudo: req.body.pseudo,
+      bio: req.body.bio,
+      userId: req.body.userId,
+    };
     const sql = `UPDATE users SET pseudo = ?, bio = ?  WHERE id = ?`;
 
-    await connection.query(
-      sql,
-      [req.body.pseudo, req.body.bio, req.body.userId],
-      (err) => {
-        if (err) throw err;
+    await connection.query(sql, [data.pseudo, data.bio, data.userId], (err) => {
+      if (err) throw err;
 
-        res.status(200).json({ message: "Profil modifié" });
-      }
-    );
+      res.status(200).json({ message: "Profil modifié" });
+    });
   } catch (err) {
     res.status(400).json({ err });
   }
