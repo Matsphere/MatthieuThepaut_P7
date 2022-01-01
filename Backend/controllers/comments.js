@@ -22,13 +22,13 @@ exports.createComment = async (req, res) => {
   try {
     const data = {
       userId: req.body.userId,
-      text: req.body.text,
+      comment: req.body.text,
     };
 
-    const sql = `INSERT INTO comments (commenter_id, pub_id, text) VALUES (?, ?, ?,)`;
+    const sql = `INSERT INTO comments (commenter_id, pub_id, comment) VALUES (?, ?, ?,)`;
     await connection.query(
       sql,
-      [data.userId, req.params.id, data.text],
+      [data.userId, req.params.id, data.comment],
       (err, result) => {
         if (err) throw err;
         res.status(201).json({ message: "Commentaire publié!" });
@@ -42,7 +42,7 @@ exports.createComment = async (req, res) => {
 exports.modifyComment = async (req,res) => {
 try {
 const data = req.body.text;
-const sql = `UPDATE comments SET text = ? WHERE id = ?`
+const sql = `UPDATE comments SET comment = ? WHERE id = ?`
 await connection.query(sql, [data, req.params.id], (err) => {
     if (err) throw err ;
     res.status(200).json({message : 'Commentaire modifié!'})
@@ -55,7 +55,7 @@ res.status(400).json({error : err, message : 'Un problème est survenu!'})
 
 exports.deleteComment = async (req,res) => {
     try {
-    const sql = `DELETE FORM comments WHERE id = ?`
+    const sql = `DELETE FROM comments WHERE id = ?`
     await connection.query(sql, [req.params.id], (err) => {
         if (err) throw err ;
         res.status(200).json({message : 'Commentaire supprimé!'})

@@ -1,4 +1,3 @@
-const fs = require("fs");
 const dotenv = require("dotenv");
 const connection = require("../db");
 dotenv.config();
@@ -9,10 +8,6 @@ exports.getAllPublications = async (req, res, next) => {
     await connection.query(sql, (err, result) => {
       if (err) throw err;
 
-      result.forEach((el) => {
-        if (el.image_url)
-          el.image_url = process.env.URL + process.env.DIR + el.image_url;
-      });
 
       res.status(200).json(result);
     });
@@ -27,9 +22,6 @@ exports.getOnePublication = async (req, res, next) => {
     await connection.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
 
-      if (result.image_url)
-        result.image_url = process.env.URL + process.env.DIR + result.image_url;
-
       res.status(200).json(result);
     });
   } catch (err) {
@@ -39,10 +31,10 @@ exports.getOnePublication = async (req, res, next) => {
 
 exports.createPublication = async (req, res, next) => {
   try {
-    const sql = `INSERT INTO publications (author_id, text, date, image_url) VALUES (?, ?, DATE_FORMAT(CURDATE(), ${"%d/%m/%%y"}, ?)`;
+    const sql = `INSERT INTO publications (author_id, text, date) VALUES (?, ?, DATE_FORMAT(CURDATE(), "%d/%m/%%y"))`;
     await connection.query(
       sql,
-      [req.body.userId, req.body.text, req.file ? req.file.filename : ""],
+      [req.body.userId, req.body.text],
       (err) => {
         if (err) throw err;
 
@@ -105,6 +97,6 @@ exports.feedback = async (req, res, next) => {
     })
     
   } catch (err) {
-    res.status(err.statusCode).json({ err });
+    res.status(400).json({ err });
   }
 };
