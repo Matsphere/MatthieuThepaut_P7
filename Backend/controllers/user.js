@@ -61,20 +61,20 @@ exports.login = async (req, res, next) => {
       //   result[0].password
       // );
       //
-      if (req.body.password !== result.password) {
+      if (req.body.password != result[0].password) {
         return res.status(401).json({ message: "Mot de passe incorrect !" });
       }
-      result.avatar = process.env.URL + process.env.DIR + result.avatar;
-      const token = jwt.sign({ userId: result.id }, "RANDOM_TOKEN_SECRET", {
+      result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
+      const token = jwt.sign({ userId: result[0].id }, "RANDOM_TOKEN_SECRET", {
         expiresIn: "24h",
       });
       res.cookie("token", token);
       res.json({
-        userId: result.id,
-        email: result.email,
-        avatar: result.avatar,
-        pseudo: result.pseudo,
-        bio: result.bio,
+        userId: result[0].id,
+        email: result[0].email,
+        avatar: result[0].avatar,
+        pseudo: result[0].pseudo,
+        bio: result[0].bio,
       });
 
       return res.status(200);
@@ -109,9 +109,12 @@ exports.editAvatar = async (req, res) => {
       oldAvatar: req.body.oldAvatar,
       userId: req.body.userId,
     };
-    fs.unlink(data.oldAvatar, (err) => {
-      if (err) throw err;
-    });
+
+    if (data.oldAvatar) {
+      fs.unlink(data.oldAvatar, (err) => {
+        if (err) throw err;
+      });
+    }
     const newAvatar = req.file.filename;
     const sql = `UPDATE users SET avatar = ? WHERE id = ?`;
     await connection.query(sql, [newAvatar, data.userId], (err) => {
