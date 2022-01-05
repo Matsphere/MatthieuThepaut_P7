@@ -4,12 +4,11 @@ const connection = require("../db");
 module.exports = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-    console.log(token);
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
     const userId = decodedToken.userId;
-    console.log(userId);
+
     await connection.query(
-      `SELECT FROM users WHERE id = ?`,
+      `SELECT * FROM users WHERE id = ?`,
       [userId],
       (err, result) => {
         if (err) throw err;
@@ -19,7 +18,7 @@ module.exports = async (req, res, next) => {
       }
     );
   } catch (err) {
-    res.status(400).json({
+    res.status(410).json({
       err,
     });
   }

@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 const PublicationsCtrl = require("../controllers/publications");
 const CommentsCtrl = require("../controllers/comments");
 
-router.get("/", PublicationsCtrl.getAllPublications);
+router.get("/", auth, PublicationsCtrl.getAllPublications);
 router.get("/:id", auth, PublicationsCtrl.getOnePublication);
 router.post("/", PublicationsCtrl.createPublication);
 router.put("/:id", auth, PublicationsCtrl.modifyPublication);

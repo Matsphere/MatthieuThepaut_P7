@@ -4,10 +4,10 @@ dotenv.config();
 
 exports.getAllComments = async (req, res) => {
   try {
-    const sql = `SELECT * FROM comments WHERE pub_id = ?`;
+    const sql = `SELECT * FROM comments WHERE pub_id = ? ORDER BY date_created DESC`;
    await connection.query(sql, [req.params.id], (err, results) => {
       if (err) throw err;
-      if (!result) {
+      if (!results) {
         res.status(200).json({ message: "Pas encore de commentaires" });
       } else {
         res.status(200).json(results);
@@ -25,7 +25,7 @@ exports.createComment = async (req, res) => {
       comment: req.body.text,
     };
 
-    const sql = `INSERT INTO comments (commenter_id, pub_id, comment) VALUES (?, ?, ?,)`;
+    const sql = `INSERT INTO comments (commenter_id, pub_id, comment, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
     await connection.query(
       sql,
       [data.userId, req.params.id, data.comment],
@@ -42,7 +42,7 @@ exports.createComment = async (req, res) => {
 exports.modifyComment = async (req,res) => {
 try {
 const data = req.body.text;
-const sql = `UPDATE comments SET comment = ? WHERE id = ?`
+const sql = `UPDATE comments SET comment = ?, date_modified = NOW() WHERE id_comment = ?`
 await connection.query(sql, [data, req.params.id], (err) => {
     if (err) throw err ;
     res.status(200).json({message : 'Commentaire modifié!'})
@@ -55,7 +55,7 @@ res.status(400).json({error : err, message : 'Un problème est survenu!'})
 
 exports.deleteComment = async (req,res) => {
     try {
-    const sql = `DELETE FROM comments WHERE id = ?`
+    const sql = `DELETE FROM comments WHERE id_comment = ?`
     await connection.query(sql, [req.params.id], (err) => {
         if (err) throw err ;
         res.status(200).json({message : 'Commentaire supprimé!'})

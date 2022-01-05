@@ -3,6 +3,7 @@ const mysql = require("mysql");
 const connection = require("./db");
 const publicationsRoutes = require("./routes/publications");
 const userRoutes = require("./routes/user");
+const cookieParser = require("cookie-parser");
 // const path = require("path");
 // const helmet = require("helmet");
 // const morgan = require("morgan");
@@ -32,6 +33,7 @@ app.use((req, res, next) => {
 // app.use(morgan("tiny"));
 // app.use(helmet());
 // app.use(clean());
+app.use(cookieParser());
 app.use(express.json());
 app.use("/api/publications", publicationsRoutes);
 app.use("/api/auth", userRoutes);
