@@ -4,8 +4,11 @@ dotenv.config();
 
 exports.getAllComments = async (req, res) => {
   try {
-    const sql = `SELECT * FROM comments WHERE pub_id = ? ORDER BY date_created DESC`;
-   await connection.query(sql, [req.body.publicationId], (err, results) => {
+    const sql = `SELECT com.*, users.pseudo, users.avatar FROM comments com WHERE pub_id = ?
+    LEFT JOIN users 
+    ON users.id_user = com.author_id
+    ORDER BY date_created DESC`;
+    await connection.query(sql, [req.body.publicationId], (err, results) => {
       if (err) throw err;
       if (!results) {
         res.status(200).json({ message: "Pas encore de commentaires" });
@@ -39,29 +42,27 @@ exports.createComment = async (req, res) => {
   }
 };
 
-exports.modifyComment = async (req,res) => {
-try {
-const data = req.body.text;
-const sql = `UPDATE comments SET comment = ?, date_modified = NOW() WHERE id_comment = ?`
-await connection.query(sql, [data, req.params.id], (err) => {
-    if (err) throw err ;
-    res.status(200).json({message : 'Commentaire modifié!'})
-})
+exports.modifyComment = async (req, res) => {
+  try {
+    const data = req.body.text;
+    const sql = `UPDATE comments SET comment = ?, date_modified = NOW() WHERE id_comment = ?`;
+    await connection.query(sql, [data, req.params.id], (err) => {
+      if (err) throw err;
+      res.status(200).json({ message: "Commentaire modifié!" });
+    });
+  } catch (err) {
+    res.status(400).json({ error: err, message: "Un problème est survenu!" });
+  }
+};
 
-} catch (err) {
-res.status(400).json({error : err, message : 'Un problème est survenu!'})
-}
-}
-
-exports.deleteComment = async (req,res) => {
-    try {
-    const sql = `DELETE FROM comments WHERE id_comment = ?`
+exports.deleteComment = async (req, res) => {
+  try {
+    const sql = `DELETE FROM comments WHERE id_comment = ?`;
     await connection.query(sql, [req.params.id], (err) => {
-        if (err) throw err ;
-        res.status(200).json({message : 'Commentaire supprimé!'})
-    })
-    
-    } catch (err) {
-    res.status(400).json({error : err, message : 'Un problème est survenu!'})
-    }
-    }
+      if (err) throw err;
+      res.status(200).json({ message: "Commentaire supprimé!" });
+    });
+  } catch (err) {
+    res.status(400).json({ error: err, message: "Un problème est survenu!" });
+  }
+};
