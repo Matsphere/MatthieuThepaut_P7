@@ -12,7 +12,7 @@ router.post("/", PublicationsCtrl.createPublication);
 router.put("/:id", auth, PublicationsCtrl.modifyPublication);
 router.delete("/:id", auth, PublicationsCtrl.deletePublication);
 router.post("/:id/like", PublicationsCtrl.feedback);
-router.get("/:id/comments", auth, CommentsCtrl.getAllComments);
+router.post("/comments", auth, CommentsCtrl.getAllComments);
 router.post("/:id/comment", auth, CommentsCtrl.createComment);
 
 module.exports = router;

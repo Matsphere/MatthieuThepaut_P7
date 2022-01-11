@@ -21,4 +21,11 @@ export default {
   getAllPublications() {
     return axiosClient.get("/api/publications/");
   },
+
+  getAllComments(data) {
+    return axiosClient.post(
+      "/api/publications/comments",
+      JSON.stringify({ publicationId: data })
+    );
+  },
 };

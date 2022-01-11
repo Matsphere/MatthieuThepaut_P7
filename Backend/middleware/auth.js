@@ -18,8 +18,6 @@ module.exports = async (req, res, next) => {
       }
     );
   } catch (err) {
-    res.status(410).json({
-      err,
-    });
+    res.status(401).json({err});
   }
 };

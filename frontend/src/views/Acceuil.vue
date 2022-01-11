@@ -1,18 +1,47 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <NavBar
+      :userId="this.user.id_user"
+      :avatar="this.user.avatar"
+      :pseudo="this.user.pseudo"
+    />
+    <div v-if="this.publications">
+      <Publication
+        v-for="publication in publications"
+        :key="publication.id_publication"
+        :publication="publication"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import NavBar from "@/components/NavBar.vue";
+const Publication = require("../components/Publication.vue");
 
 export default {
   name: "Home",
   components: {
     NavBar,
+    Publication,
+  },
+  computed: {
+    publications() {
+      return this.$store.publications;
+    },
+    user() {
+      return this.$store.user;
+    },
+  },
+  created: async function () {
+    try {
+      await this.$store.dispatch("getAllPublications");
+    } catch (err) {
+      if (err.status == 401) {
+        this.$router.push({ name: "Login" });
+      }
+    }
   },
 };
 </script>

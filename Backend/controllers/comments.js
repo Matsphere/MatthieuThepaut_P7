@@ -5,7 +5,7 @@ dotenv.config();
 exports.getAllComments = async (req, res) => {
   try {
     const sql = `SELECT * FROM comments WHERE pub_id = ? ORDER BY date_created DESC`;
-   await connection.query(sql, [req.params.id], (err, results) => {
+   await connection.query(sql, [req.body.publicationId], (err, results) => {
       if (err) throw err;
       if (!results) {
         res.status(200).json({ message: "Pas encore de commentaires" });
