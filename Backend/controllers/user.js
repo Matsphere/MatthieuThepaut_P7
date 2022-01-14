@@ -1,11 +1,10 @@
 const bcrypt = require("bcrypt");
-// const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const validator = require("password-validator");
-const connection = require("../db");
 const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
+const User = require("../models/user");
 
 let schema = new validator();
 
@@ -26,122 +25,104 @@ schema
 
 exports.signup = async (req, res, next) => {
   try {
-    const data = {
-      email: req.body.email,
-      password: req.body.password,
-      pseudo: req.body.pseudo,
-    };
-    if (!schema.validate(data.password))
+    if (!schema.validate(req.body.password))
       throw new Error(
         "Le mot de passe doit contenir 8 caractères au minimum dont au moins une majuscule et un chiffre"
       );
 
-    const hash = await bcrypt.hash(data.password, 10);
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const user = new User({
+      email: req.body.email,
+      pseudo: req.body.pseudo,
+    });
     const sql = `INSERT INTO users (email, password, pseudo, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
-    await connection.query(
-      sql,
-      [data.email, hash, data.pseudo],
-      (err, result) => {
-        if (err) throw err;
-        const userId = result.insertId;
-        const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
-          expiresIn: "24h",
-        });
-        res.cookie("token", token);
-        res.json({ userId: userId, message: "Compte créé avec succès!" });
+    const result = await User.sendQuery(sql, [user.email, hash, user.pseudo]);
+    const userId = result.insertId;
+    const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
+      expiresIn: "24h",
+    });
+    res.cookie("token", token);
+    res.json({ userId: userId, ...user, message: "Compte créé avec succès!" });
 
-        return res.status(200);
-      }
-    );
+    return res.status(200);
   } catch (err) {
     res.status(400).json({ err });
   }
 };
 exports.login = async (req, res, next) => {
   try {
-    const sql = `SELECT id_user, email, avatar, pseudo, bio FROM users WHERE email = ?`;
-    await connection.query(sql, [req.body.email], (err, result) => {
-      console.log(result);
-      if (err) throw err;
-      if (!result)
-        return res.status(404).json({ message: "Utilisateur non trouvé!" });
-      // const valid = await bcrypt.compare(
-      //   req.body.password,
-      //   result[0].password
-      // );
-      //
-      if (req.body.password != result[0].password) {
-        return res.status(401).json({ message: "Mot de passe incorrect !" });
-      }
-      result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
-      const token = jwt.sign(
-        { userId: result[0].id_user },
-        "RANDOM_TOKEN_SECRET",
-        {
-          expiresIn: "24h",
-        }
-      );
-      res.cookie("token", token);
-      res.json({
-        result,
-      });
+    const sql = `SELECT * FROM users WHERE email = ?`;
+    const result = await User.sendQuery(sql, [req.body.email]);
+    if (!result)
+      return res.status(404).json({ message: "Utilisateur non trouvé!" });
 
-      return res.status(200);
+    const valid = await bcrypt.compare(req.body.password, result[0].password);
+    if (!valid) {
+      return res.status(401).json({ message: "Mot de passe incorrect !" });
+    }
+
+    result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
+    const user = new User(result[0]);
+
+    const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
+      expiresIn: "24h",
     });
+    res.cookie("token", token);
+    res.json({
+      ...user,
+    });
+
+    return res.status(200);
   } catch (err) {
-    res.status(err.statusCode).json({ err });
+    res.status(400).json({ error: err, message: "Un problème est survenu!" });
   }
 };
 
 exports.editInfo = async (req, res, next) => {
   try {
-    const data = {
+    const user = new User({
       pseudo: req.body.pseudo,
       bio: req.body.bio,
-      userId: req.body.userId,
-    };
+      id_user: req.body.userId,
+    });
+    let sql = "";
+    let values = [];
 
     if (data.pseudo && data.bio) {
-      const sql = `UPDATE users SET pseudo = ?, bio = ?, date_modified = NOW()  WHERE id_user = ?`;
-      const values = [data.pseudo, data.bio, data.userId];
+      sql = `UPDATE users SET pseudo = ?, bio = ?, date_modified = NOW()  WHERE id_user = ?`;
+      values = [user.pseudo, user.bio, user.id_user];
     } else if (data.pseudo) {
-      const sql = `UPDATE users SET pseudo = ?, date_modified = NOW()  WHERE id_user = ?`;
-      const values = [data.pseudo, data.userId];
+      sql = `UPDATE users SET pseudo = ?, date_modified = NOW()  WHERE id_user = ?`;
+      values = [user.pseudo, user.id_user];
     } else if (data.bio) {
-      const sql = `UPDATE users SET bio = ?, date_modified = NOW()  WHERE id_user = ?`;
-      const values = [data.bio, data.userId];
+      sql = `UPDATE users SET bio = ?, date_modified = NOW()  WHERE id_user = ?`;
+      values = [user.bio, user.id_user];
     }
 
-    await connection.query(sql, values, (err) => {
-      if (err) throw err;
+    await User.sendQuery(sql, values);
 
-      res.status(200).json({ message: "Profil modifié" });
-    });
+    res.status(200).json({ message: "Profil modifié" });
   } catch (err) {
-    res.status(400).json({ err });
+    res.status(400).json({ error: err, message: "Un problème est survenu!" });
   }
 };
 
 exports.editAvatar = async (req, res) => {
   try {
-    const data = {
-      oldAvatar: req.body.oldAvatar,
-      userId: req.body.userId,
-    };
-
-    if (data.oldAvatar) {
-      fs.unlink(data.oldAvatar, (err) => {
+    if (req.body.oldAvatar) {
+      fs.unlink(req.body.oldAvatar, (err) => {
         if (err) throw err;
       });
     }
-    const newAvatar = req.file.filename;
-    const sql = `UPDATE users SET avatar = ? WHERE id_user = ?`;
-    await connection.query(sql, [newAvatar, data.userId], (err) => {
-      if (err) throw err;
-
-      res.status(200).json({ message: "Profil modifié" });
+    const user = new User({
+      id_user: req.body.userId,
+      avatar: req.file.filename,
     });
+    const sql = `UPDATE users SET avatar = ? WHERE id_user = ?`;
+    await User.sendQuery(sql, [user.avatar, user.id_user]);
+
+    res.status(200).json({ message: "Profil modifié" });
   } catch (err) {
-    res.status(400).json({ err });
+    res.status(400).json({ error: err, message: "Un Problème est survenu!" });
   }
 };

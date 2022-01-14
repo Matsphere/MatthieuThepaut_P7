@@ -11,14 +11,14 @@
       <input type="text" id="email" required />
       <label for="password">Mot de passe</label>
       <input type="password" id="password" required minlength="8" />
-      <button @clicktype="submit">Connexion</button>
+      <button type="submit">Connexion</button>
     </form>
   </div>
 </template>
 <script>
 export default {
   method: {
-    async submitData(e) {
+    async submitData() {
      try {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;

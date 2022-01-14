@@ -4,11 +4,11 @@ dotenv.config();
 
 exports.getAllPublications = async (req, res, next) => {
   try {
-    const sql = `SELECT pub.*, users.avatar, users.pseudo, (SELECT COUNT(*) FROM reactions WHERE vote = 1) AS likes, (SELECT COUNT(*) FROM reactions WHERE vote = 0) AS dislikes, JSON_ARRAYAGG((SELECT voter_id FROM reactions WHERE vote = 1)) AS users_liked, JSON_ARRAYAGG((SELECT voter_id FROM reactions WHERE vote = 0)) AS users_disliked  FROM publications pub 
+    const sql = `SELECT pub.*, users.avatar, users.pseudo, COUNT(*) as comments_number  FROM publications pub 
     LEFT JOIN users
     ON pub.author_id = users.id_user
-    LEFT JOIN reactions
-    ON reactions.pub_id = pub.id_publication
+    LEFT JOIN comments
+    ON comments.pub_id = pub.id_publication
     GROUP BY pub.id_publication
     ORDER BY pub.date_created DESC`;
     await connection.query(sql, async (err, result) => {
@@ -79,39 +79,45 @@ exports.feedback = async (req, res, next) => {
     const data = {
       userId: req.body.userId,
       vote: req.body.vote,
+      pubId: req.params.id,
     };
-    if (data.vote == 0) {
-      const sql = `DELETE FROM reactions WHERE pub_id=? AND voter_id = ?`;
-      await connection.query(
-        sql,
-        [req.params.id, data.userId],
-        async (err, result) => {
-          if (err) throw err;
-          return res.status(201).json({ message: "Vote enregistré!" });
-        }
-      );
-    } else {
+    const reaction = await connection.query(
+      `SELECT users_iked, users_disliked FROM publications WHERE id_publication=?`,
+      [data.pubId]
+    );
 
+    data.usersLiked = JSON.parse(reaction[0].users_liked);
+    data.usersDisliked = JSON.parse(reaction[0].users_disliked);
 
-      const sql1 = `SELECT * from reactions WHERE pub_id=? AND voter_id = ?`;
-      const result = await connection.query(sql1, [req.params.id, data.userId]);
-      if (result[0]) {
-         console.log(result[0]);
-         const sql = `UPDATE reactions SET vote = ?, date_modified = NOW() WHERE pub_id = ? AND voter_id = ?`;
-         await connection.query(sql, [data.vote == -1 ? 0 : 1,  req.params.id, data.userId], (err) => {
-                if (err) throw err;
-         });
-         return res.status(201).json({ message: "Vote enregistré!" });
-      } else {
-         const sql = `INSERT INTO reactions (voter_id, pub_id, vote, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
-         await connection.query(sql, [data.userId, req.params.id, data.vote == -1 ? 0 : 1], (err) => {
-                if (err) throw err;
-          });
-         return res.status(201).json({ message: "Vote enregistré!" });
-        }
+    if (data.vote == 0 && data.usersLiked.includes(data.userId)) {
+      const index = data.usersLiked.findIndex((id) => {
+        id == userdata.userId;
+      });
+      const value = JSON.stringify(data.usersLiked.splice(index, 1));
+      const sql = `UPDATE publications SET users_liked = ? WHERE id_publication = ?`;
     }
-    
-    
+    if (data.vote == 0 && data.usersDisliked.includes(data.userId)) {
+      const index = data.usersDisliked.findIndex((id) => {
+        id == userdata.userId;
+      });
+      const value = JSON.stringify(data.usersDisiked.splice(index, 1));
+      const sql = `UPDATE publications SET users_disliked = ? WHERE id_publication = ?`;
+    }
+
+    if (data.vote == 1) {
+      const value = JSON.stringify(data.usersLiked.push(data.userId));
+      const sql = `UPDATE publications SET users_liked = ? WHERE id_publication = ?`;
+    }
+    if (data.vote == -1) {
+      const value = JSON.stringify(data.usersDisiked.push(data.userId));
+      const sql = `UPDATE publications SET users_disliked = ? WHERE id_publication = ?`;
+    }
+    await connection.query(sql, [value, data.pubId], (err, resut) => {
+      if (err) {
+        throw err;
+      }
+      return res.status(200).json({ message: "Vote enregistré!" });
+    });
   } catch (err) {
     res.status(400).json({ err });
   }

@@ -1,11 +1,23 @@
 const connection = require("../db");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const users = `CREATE TABLE IF NOT EXISTS users (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
-)`;
+const User = function (user) {
+  this.id_user = user.id_user;
+  this.email = user.email;
+  this.avatar =
+    user.avatar || process.env.URL + process.env.DIR + "default.jpeg";
+  this.pseudo = user.pseudo;
+  this.bio = user.bio;
+  this.is_admin = user.is_admin || 0;
+  this.is_active = user.is_active || 1;
+};
 
-connection.query(users, (err) => {
-  if (err) throw err;
-});
+User.sendQuery = (sql, values) => {
+  connection.query(sql, values, (err, result) => {
+    if (err) throw err;
+    return result;
+  });
+};
+
+module.exports = User;

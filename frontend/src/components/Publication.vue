@@ -16,6 +16,10 @@
     <p @click="displayComments" v-if="!this.publication.comments">
       Afficher les commentaires
     </p>
+    <form action="">
+      <input type="text" />
+    </form>
+
     <div v-else>
       <Comment
         v-for="comment in this.publication.comments"
@@ -39,14 +43,14 @@ export default {
   },
   methods: {
     async displayComments() {
-     try {
-      const publicationId = this.publication.id_publication;
-      await this.$store.dispatch("getAllComments", publicationId);
-     } catch(err) {
-       console.log(err)
-     }
-    }
-  }
+      try {
+        const publicationId = this.publication.id_publication;
+        await this.$store.dispatch("getAllComments", publicationId);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
 };
 </script>
 
