@@ -1,16 +1,18 @@
 const connection = require("../db");
 
-const publications = `CREATE TABLE IF NOT EXISTS publications (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    author_id INT NOT NULL,
-    date DATE NOT NULL,
-    text VARCHAR(255) NOT NULL,
-    likes INT DEFAULT 0,
-    dislikes INT DEFAULT 0,
-    users_liked JSON,
-    users_disliked JSON
-)`;
+const Publication = function (publication) {
+  this.id_publication = publication.id_publication;
+  this.author_id = publication.author_id;
+  this.text = publication.text;
+  this.users_liked = publication.users_liked || [];
+  this.users_disliked = publication.users_disliked || [];
+};
 
-connection.query(publications, (err) => {
-  if (err) throw err;
-});
+Publication.sendQuery = (sql, values) => {
+  connection.query(sql, values, (err, result) => {
+    if (err) throw err;
+    return result;
+  });
+};
+
+module.exports = Publication;
