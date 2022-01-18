@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
 import Acceuil from "../views/Acceuil.vue";
-import Article from "../views/Article.vue";
+import CreatePublication from "../views/CreatePublication";
 import Profil from "../views/Profil.vue";
+import Signup from "../views/Signup.vue"
 
 const routes = [
   {
@@ -11,9 +12,9 @@ const routes = [
     component: Acceuil,
   },
   {
-    path: "/article/:id",
-    name: "Article",
-    component: Article,
+    path: "/createPublication",
+    name: "CreatePublication",
+    component: CreatePublication,
     props: true,
   },
   {
@@ -27,6 +28,11 @@ const routes = [
     name: "Login",
     component: Login,
   },
+  {
+    path: "/signup",
+    name : Signup,
+    component: Signup
+  }
 ];
 
 const router = createRouter({

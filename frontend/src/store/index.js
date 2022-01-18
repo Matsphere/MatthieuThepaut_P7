@@ -12,11 +12,16 @@ export default createStore({
       state.user = { ...data };
     },
     setPublications(data) {
-      state.publications = data ;
+      state.publications = data;
     },
     setComments(data) {
-      const index = state.publications.findIndex(pub => pub.id_publication == data.publicationId);
-      state.publications[index].comments = data.comments;
+      state.publications[data.index].comments = data.comments;
+    },
+    addComment(data) {
+      state.publications[data.index].splice(0, 0, data.comment);
+    },
+    addPublication(data) {
+      state.publications.splice(0, 0, data);
     },
   },
   actions: {
@@ -34,6 +39,19 @@ export default createStore({
       }
     },
 
+    async signup({ commit }, userInfo) {
+      try {
+        const response = await apiHandler.signup(userInfo);
+        if (!response.ok) {
+          throw response;
+        }
+        const data = response.json();
+        commit("setUser", data);
+        this.$router.push({ name: "Acceuil" });
+      } catch (err) {
+        throw err;
+      }
+    },
     async getAllPublications({ commit }) {
       try {
         const response = await apiHandler.getAllPublications();
@@ -46,6 +64,19 @@ export default createStore({
         throw err;
       }
     },
+    async createPublication({ commit }, publication) {
+      try {
+        const response = await apiHandler.createPublication(publication);
+        if (!response.ok) {
+          throw response;
+        }
+        const data = response.json();
+        commit("addPublication", data);
+        this.$router.push({ name: "Acceuil" });
+      } catch (err) {
+        throw err;
+      }
+    },
 
     async getAllComments({ commit }, publicationId) {
       try {
@@ -54,7 +85,10 @@ export default createStore({
           throw response;
         }
         const data = response.json();
-        commit("setComments", {comments: data, publicationId: publicationId });
+        const index = state.publications.findIndex(
+          (pub) => pub.id_publication == publicationId
+        );
+        commit("setComments", { comments: data, index: index });
       } catch (err) {
         throw err;
       }

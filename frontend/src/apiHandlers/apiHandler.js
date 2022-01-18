@@ -18,14 +18,28 @@ export default {
     );
   },
 
+  signup(data) {
+    return axiosClient.post(
+      "/api/auth/signup",
+      JSON.stringify({
+        email: data.email,
+        password: data.password,
+        pseudo: data.pseudo,
+      })
+    );
+  },
   getAllPublications() {
     return axiosClient.get("/api/publications/");
+  },
+
+  createPublication(data) {
+    return axiosClient.post("/api/publications/");
   },
 
   getAllComments(data) {
     return axiosClient.post(
       "/api/publications/comments",
-      JSON.stringify({ publicationId: data })
+      JSON.stringify({ pub_id: data })
     );
   },
 };

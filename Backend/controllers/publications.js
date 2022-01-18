@@ -4,7 +4,7 @@ const Publication = require("../models/publication");
 
 exports.getAllPublications = async (req, res, next) => {
   try {
-    const sql = `SELECT pub.*, users.avatar, users.pseudo, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
+    const sql = `SELECT pub.*, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
     LEFT JOIN users
     ON pub.author_id = users.id_user
     LEFT JOIN comments
@@ -47,9 +47,7 @@ exports.createPublication = async (req, res, next) => {
       publication.users_liked,
       publication.users_disliked,
     ]);
-    res
-      .status(200)
-      .json({ id_publication: result.insertId, message: "Publication créée" });
+    res.status(200).json({ id_publication: result.insertId, ...publication });
   } catch (err) {
     res.status(400).json({ err });
   }

@@ -2,7 +2,7 @@
   <div class="publication">
     <div>
       <figure>
-        <img :src="this.publication.avatar" alt="Avatar de l'auteur" />
+        <img :src="publication.avatar" alt="Avatar de l'auteur" />
       </figure>
       <p>{{ this.publication.pseudo }}</p>
     </div>
@@ -13,20 +13,18 @@
       <i class="far fa-thumbs-down"></i>
       <span>N°</span>
     </div>
-    <p @click="displayComments" v-if="!this.publication.comments">
+    <!-- <p @click="displayComments" v-if="!publication.comments">
       Afficher les commentaires
     </p>
-    <form action="">
-      <input type="text" />
-    </form>
+    
 
     <div v-else>
       <Comment
-        v-for="comment in this.publication.comments"
+        v-for="comment in publication.comments"
         :key="comment.id_comment"
         :comment="comment"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -55,19 +53,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+<style scoped></style>

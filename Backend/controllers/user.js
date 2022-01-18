@@ -42,7 +42,7 @@ exports.signup = async (req, res, next) => {
       expiresIn: "24h",
     });
     res.cookie("token", token);
-    res.json({ userId: userId, ...user, message: "Compte créé avec succès!" });
+    res.json({ id_user: userId, ...user });
 
     return res.status(200);
   } catch (err) {

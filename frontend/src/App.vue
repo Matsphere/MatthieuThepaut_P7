@@ -1,10 +1,31 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div>
+    <NavBar
+      v-if="user"
+      :userId="user.id_user"
+      :avatar="user.avatar"
+      :pseudo="user.pseudo"
+      class="nav"
+    />
+    <div v-else class="nav"></div>
+    <router-view />
   </div>
-  <router-view />
 </template>
+
+<script>
+import NavBar from "./components/NavBar.vue*";
+
+export default {
+  components: {
+    NavBar,
+  },
+  computed: {
+    user() {
+      return this.$store.user;
+    },
+  },
+};
+</script>
 
 <style>
 #app {

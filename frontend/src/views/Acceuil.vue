@@ -1,10 +1,6 @@
 <template>
   <div class="home">
-    <NavBar
-      :userId="this.user.id_user"
-      :avatar="this.user.avatar"
-      :pseudo="this.user.pseudo"
-    />
+    
     <div v-if="this.publications">
       <Publication
         v-for="publication in publications"
@@ -36,6 +32,9 @@ export default {
   },
   created: async function () {
     try {
+      if(!this.$store.user) {
+        this.$router.push({ name: "Login" });
+      }
       await this.$store.dispatch("getAllPublications");
     } catch (err) {
       if (err.status == 401) {

@@ -8,7 +8,7 @@ exports.getAllComments = async (req, res) => {
     LEFT JOIN users 
     ON users.id_user = com.author_id
     ORDER BY date_created DESC`;
-    const results = await Comment.sendQuery(sql, [publicationId]);
+    const results = await Comment.sendQuery(sql, [req.body.pub_id]);
     if (!results) {
       res.status(200).json({ message: "Pas encore de commentaires" });
     } else {
