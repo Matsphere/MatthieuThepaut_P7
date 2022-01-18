@@ -14,7 +14,7 @@ const User = function (user) {
 };
 
 User.sendQuery = (sql, values) => {
-  connection.query(sql, values, (err, result) => {
+  return connection.query(sql, values, (err, result) => {
     if (err) throw err;
     return result;
   });

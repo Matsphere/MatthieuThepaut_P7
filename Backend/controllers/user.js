@@ -35,8 +35,10 @@ exports.signup = async (req, res, next) => {
       email: req.body.email,
       pseudo: req.body.pseudo,
     });
+    console.log(user);
     const sql = `INSERT INTO users (email, password, pseudo, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
     const result = await User.sendQuery(sql, [user.email, hash, user.pseudo]);
+    console.log(result);
     const userId = result.insertId;
     const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
       expiresIn: "24h",

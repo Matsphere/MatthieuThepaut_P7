@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const axiosClient = axios.create({
-  baseURL: process.env.URL,
+  baseURL: "http://localhost:3000/",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
