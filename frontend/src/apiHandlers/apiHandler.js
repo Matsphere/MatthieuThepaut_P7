@@ -18,7 +18,7 @@ export default {
     );
   },
 
-  signup(data) {
+  async signup(data) {
     return axiosClient.post(
       "/api/auth/signup",
       JSON.stringify({
@@ -33,7 +33,7 @@ export default {
   },
 
   createPublication(data) {
-    return axiosClient.post("/api/publications/");
+    return axiosClient.post("/api/publications/", JSON.stringify(data));
   },
 
   getAllComments(data) {

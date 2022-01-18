@@ -3,7 +3,7 @@ import Login from "../views/Login.vue";
 import Acceuil from "../views/Acceuil.vue";
 import CreatePublication from "../views/CreatePublication";
 import Profil from "../views/Profil.vue";
-import Signup from "../views/Signup.vue"
+import Signup from "../views/Signup.vue";
 
 const routes = [
   {
@@ -30,9 +30,9 @@ const routes = [
   },
   {
     path: "/signup",
-    name : Signup,
-    component: Signup
-  }
+    name: "Signup",
+    component: Signup,
+  },
 ];
 
 const router = createRouter({
