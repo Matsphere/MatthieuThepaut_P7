@@ -38,7 +38,7 @@ exports.createPublication = async (req, res, next) => {
   try {
     const sql = `INSERT INTO publications (author_id, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?, ?, ?, NOW(), NOW())`;
     const publication = new Publication({
-      author_id: req.body.userId,
+      author_id: req.body.author_id,
       text: req.body.text,
     });
     const result = await Publication.sendQuery(sql, [

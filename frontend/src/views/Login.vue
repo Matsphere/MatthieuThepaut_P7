@@ -14,25 +14,24 @@
       <button type="submit">Connexion</button>
     </form>
     <p>Pas encore membre ?</p>
-    <router-link :to="{ name: 'Signup' }">Acceuil>Créer un compte!</router-link>
+    <router-link :to="{ name: 'Signup' }">Créer un compte!</router-link>
   </div>
 </template>
 <script>
 export default {
   method: {
     async submitData() {
-     try {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const data = {
-        email: email,
-        password: password,
-      };
-     await this.$store.dispatch('login', data);
-     } catch(err) {
-       console.log(err);
-
-     }
+      try {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const data = {
+          email: email,
+          password: password,
+        };
+        await this.$store.dispatch("login", data);
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };

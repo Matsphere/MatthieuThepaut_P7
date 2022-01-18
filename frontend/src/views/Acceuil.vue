@@ -1,5 +1,7 @@
 <template>
   <div class="home">
+
+    <router-link :to="{ name: 'CreatePublication' }">Nouvel article</router-link>
     
     <div v-if="this.publications">
       <Publication

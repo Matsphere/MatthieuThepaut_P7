@@ -25,7 +25,7 @@ exports.getAllComments = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const comment = new Comment({
-      author_id: req.body.userId,
+      author_id: req.body.author_id,
       comment: req.body.comment,
       pub_id: req.params.id,
     });

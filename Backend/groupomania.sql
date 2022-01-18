@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mar. 11 jan. 2022 à 12:45
+-- Généré le : mar. 18 jan. 2022 à 09:20
 -- Version du serveur : 5.7.36
 -- Version de PHP : 7.4.26
 
@@ -51,29 +51,12 @@ CREATE TABLE IF NOT EXISTS `publications` (
   `id_publication` int(11) NOT NULL AUTO_INCREMENT,
   `author_id` int(11) NOT NULL,
   `text` text NOT NULL,
+  `users_liked` json NOT NULL,
+  `users_disliked` json NOT NULL,
   `date_created` datetime NOT NULL,
   `date_modified` datetime NOT NULL,
   PRIMARY KEY (`id_publication`),
   KEY `publication_author_id` (`author_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Structure de la table `reactions`
---
-
-DROP TABLE IF EXISTS `reactions`;
-CREATE TABLE IF NOT EXISTS `reactions` (
-  `id_reaction` int(11) NOT NULL AUTO_INCREMENT,
-  `voter_id` int(11) NOT NULL,
-  `pub_id` int(11) NOT NULL,
-  `vote` tinyint(4) NOT NULL,
-  `date_created` datetime NOT NULL,
-  `date_modified` datetime NOT NULL,
-  PRIMARY KEY (`id_reaction`),
-  KEY `reaction_voter_id` (`voter_id`),
-  KEY `reaction_pub_id` (`pub_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -90,6 +73,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `avatar` varchar(255) NOT NULL DEFAULT 'default.jpeg',
   `pseudo` varchar(30) NOT NULL,
   `bio` text,
+  `is_admin` tinyint(4) NOT NULL DEFAULT '0',
+  `is_active` tinyint(4) NOT NULL DEFAULT '1',
   `date_created` datetime NOT NULL,
   `date_modified` datetime NOT NULL,
   PRIMARY KEY (`id_user`)
@@ -111,13 +96,6 @@ ALTER TABLE `comments`
 --
 ALTER TABLE `publications`
   ADD CONSTRAINT `pub_user` FOREIGN KEY (`author_id`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Contraintes pour la table `reactions`
---
-ALTER TABLE `reactions`
-  ADD CONSTRAINT `reactions_pub` FOREIGN KEY (`pub_id`) REFERENCES `publications` (`id_publication`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `reactions_users` FOREIGN KEY (`voter_id`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
