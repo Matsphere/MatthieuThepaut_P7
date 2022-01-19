@@ -8,16 +8,17 @@ module.exports = async (req, res, next) => {
     const userId = decodedToken.userId;
 
     await connection.query(
-      `SELECT * FROM users WHERE id = ?`,
+      `SELECT * FROM users WHERE id_user = ?`,
       [userId],
       (err, result) => {
-        if (err) throw err;
-        else if (!result)
+        if (err) {
+          res.status(500).json(err);
+        } else if (!result[0])
           res.status(401).json({ message: "Utilisateur non authorisé!" });
         else next();
       }
     );
   } catch (err) {
-    res.status(401).json({err});
+    res.status(401).json({ err });
   }
 };

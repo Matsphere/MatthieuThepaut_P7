@@ -29,7 +29,7 @@ export default {
           password: password,
         };
         await this.$store.dispatch("login", data);
-        console.log(this.$store.user);
+        this.$router.push({ name: "Acceuil" });
       } catch (err) {
         console.log(err);
       }

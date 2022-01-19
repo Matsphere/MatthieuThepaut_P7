@@ -25,10 +25,10 @@ export default {
   },
   computed: {
     publications() {
-      return this.$store.publications;
+      return this.$store.state.publications;
     },
     user() {
-      return this.$store.user;
+      return this.$store.state.user;
     },
   },
   created: async function () {

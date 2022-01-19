@@ -36,17 +36,18 @@ exports.signup = async (req, res, next) => {
       email: req.body.email,
       pseudo: req.body.pseudo,
     });
-    console.log(user);
-    const sql = `INSERT INTO users (email, password, pseudo, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
-    const result = await User.sendQuery(sql, [user.email, hash, user.pseudo]);
-    // const userId = result.insertId;
-    // const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
-    //   expiresIn: "24h",
-    // });
-    // res.cookie("token", token);
-    res.json({ id_user: userId, ...user });
+    User.signup(user, hash, (err, user) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
 
-    return res.status(200);
+      const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
+        expiresIn: "24h",
+      });
+
+      res.cookie("token", token);
+      return res.status(200).json(user);
+    });
   } catch (err) {
     res.status(400).json({ err });
   }
@@ -70,7 +71,7 @@ exports.login = async (req, res, next) => {
       }
 
       const user = new User(data);
-      
+
       const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
         expiresIn: "24h",
       });
@@ -90,23 +91,13 @@ exports.editInfo = async (req, res, next) => {
       bio: req.body.bio,
       id_user: req.body.userId,
     });
-    let sql = "";
-    let values = [];
 
-    if (data.pseudo && data.bio) {
-      sql = `UPDATE users SET pseudo = ?, bio = ?, date_modified = NOW()  WHERE id_user = ?`;
-      values = [user.pseudo, user.bio, user.id_user];
-    } else if (data.pseudo) {
-      sql = `UPDATE users SET pseudo = ?, date_modified = NOW()  WHERE id_user = ?`;
-      values = [user.pseudo, user.id_user];
-    } else if (data.bio) {
-      sql = `UPDATE users SET bio = ?, date_modified = NOW()  WHERE id_user = ?`;
-      values = [user.bio, user.id_user];
-    }
-
-    await User.sendQuery(sql, values);
-
-    res.status(200).json({ message: "Profil modifié" });
+    User.editInfo(user, (err) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      res.status(200).json({ message: "Profil modifié" });
+    });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
   }
@@ -114,19 +105,28 @@ exports.editInfo = async (req, res, next) => {
 
 exports.editAvatar = async (req, res) => {
   try {
-    if (req.body.oldAvatar) {
+    const user = new User({
+      id_user: req.body.userId,
+      avatar: req.file.filename,
+      avatar_edited: req.body.avatar_edited,
+    });
+
+   await User.editAvatar(user,  (err) => {
+      if (err) {
+        res.status(500).json(err);
+      }
+
+      res.status(200).json({ message: "Profil modifié" });
+      
+    });
+
+    if (user.avatar_edited == 1) {
       fs.unlink(req.body.oldAvatar, (err) => {
         if (err) throw err;
       });
     }
-    const user = new User({
-      id_user: req.body.userId,
-      avatar: req.file.filename,
-    });
-    const sql = `UPDATE users SET avatar = ? WHERE id_user = ?`;
-    await User.sendQuery(sql, [user.avatar, user.id_user]);
 
-    res.status(200).json({ message: "Profil modifié" });
+    
   } catch (err) {
     res.status(400).json({ error: err, message: "Un Problème est survenu!" });
   }

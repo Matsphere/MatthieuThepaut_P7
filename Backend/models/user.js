@@ -7,6 +7,7 @@ const User = function (user) {
   this.email = user.email;
   this.avatar =
     user.avatar || process.env.URL + process.env.DIR + "default.jpeg";
+  this.avatar_edited = user.avatar_edited || 0;
   this.pseudo = user.pseudo;
   this.bio = user.bio;
   this.is_admin = user.is_admin || 0;
@@ -25,6 +26,46 @@ User.login = (email, callback) => {
       callback(null, result[0]);
     }
   );
+};
+
+User.signup = (user, hash, callback) => {
+  connection.query(
+    `INSERT INTO users (email, password, pseudo, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`,
+    [user.email, hash, user.pseudo],
+    (err, result) => {
+      if (err) {
+        callback(err, null);
+      }
+      user.id_user = result.insertId;
+      callback(null, user);
+    }
+  );
+};
+
+User.editInfo = (user, callback) => {
+  connection.query(
+    `UPDATE users SET pseudo = ?, bio = ?, date_modified = NOW()  WHERE id_user = ?`,
+    [user.pseudo, user.bio, user.id_user],
+    (err) => {
+      if (err) {
+        callback(err);
+      }
+      callback(null);
+    }
+  );
+};
+
+User.editAvatar = (user, callback) => {
+  const sql =
+    user.avatar_edited == 0
+      ? `UPDATE users SET avatar = ?, avatar_edited = 1, date_modified = NOW() WHERE id_user = ?`
+      : `UPDATE users SET avatar = ? date_modified = NOW() WHERE id_user = ?`;
+  connection.query(sql, [user.avatar, user.id_user], (err) => {
+    if (err) {
+      callback(err);
+    }
+    callback(null);
+  });
 };
 
 module.exports = User;
