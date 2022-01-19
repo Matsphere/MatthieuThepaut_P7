@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const fs = require("fs");
 const User = require("../models/user");
+const connection = require("../db");
 
 let schema = new validator();
 
@@ -38,12 +39,11 @@ exports.signup = async (req, res, next) => {
     console.log(user);
     const sql = `INSERT INTO users (email, password, pseudo, date_created, date_modified) VALUES (?, ?, ?, NOW(), NOW())`;
     const result = await User.sendQuery(sql, [user.email, hash, user.pseudo]);
-    console.log(result);
-    const userId = result.insertId;
-    const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
-      expiresIn: "24h",
-    });
-    res.cookie("token", token);
+    // const userId = result.insertId;
+    // const token = jwt.sign({ userId: userId }, "RANDOM_TOKEN_SECRET", {
+    //   expiresIn: "24h",
+    // });
+    // res.cookie("token", token);
     res.json({ id_user: userId, ...user });
 
     return res.status(200);
@@ -53,28 +53,31 @@ exports.signup = async (req, res, next) => {
 };
 exports.login = async (req, res, next) => {
   try {
-    const sql = `SELECT * FROM users WHERE email = ?`;
-    const result = await User.sendQuery(sql, [req.body.email]);
-    if (!result)
-      return res.status(404).json({ message: "Utilisateur non trouvé!" });
+    User.login(req.body.email, async (err, data) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
 
-    const valid = await bcrypt.compare(req.body.password, result[0].password);
-    if (!valid) {
-      return res.status(401).json({ message: "Mot de passe incorrect !" });
-    }
+      if (!data) {
+        return res
+          .status(404)
+          .json({ message: "Aucun compte associé à cette adresse e-mail!" });
+      }
 
-    result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
-    const user = new User(result[0]);
+      const valid = await bcrypt.compare(req.body.password, data.password);
+      if (!valid) {
+        return res.status(401).json({ message: "Mot de passe incorrect !" });
+      }
 
-    const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
-      expiresIn: "24h",
+      const user = new User(data);
+      
+      const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
+        expiresIn: "24h",
+      });
+
+      res.cookie("token", token);
+      return res.status(200).json(user);
     });
-    res.cookie("token", token);
-    res.json({
-      ...user,
-    });
-
-    return res.status(200);
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
   }

@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  method: {
+  methods: {
     async submitData() {
       try {
         const email = document.getElementById("email").value;
@@ -29,6 +29,7 @@ export default {
           password: password,
         };
         await this.$store.dispatch("login", data);
+        console.log(this.$store.user);
       } catch (err) {
         console.log(err);
       }

@@ -5,11 +5,11 @@ import apiHandler from "../apiHandlers/apiHandler";
 export default createStore({
   state: {
     publications: [],
-    user: {},
+    user: { merde: "merde" },
   },
   mutations: {
     setUser(data) {
-      state.user = { ...data };
+      state.user = data;
     },
     setPublications(data) {
       state.publications = data;
@@ -27,12 +27,12 @@ export default createStore({
   actions: {
     async login({ commit }, userInfo) {
       const response = await apiHandler.login(userInfo);
-      if (!response.ok) {
+      if (response.statusText != "OK") {
         throw response;
       }
-      const data = response.json();
-      commit("setUser", data);
-      this.$router.push({ name: "Acceuil" });
+      console.log(state);
+      commit("setUser", response.data);
+      // this.$router.push({ name: "Acceuil" });
     },
 
     async signup({ commit }, userInfo) {

@@ -13,11 +13,18 @@ const User = function (user) {
   this.is_active = user.is_active || 1;
 };
 
-User.sendQuery = (sql, values) => {
-  return connection.query(sql, values, (err, result) => {
-    if (err) throw err;
-    return result;
-  });
+User.login = (email, callback) => {
+  connection.query(
+    `SELECT * FROM users WHERE email = ?`,
+    [email],
+    (err, result) => {
+      if (err) {
+        callback(err, null);
+      }
+      result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
+      callback(null, result[0]);
+    }
+  );
 };
 
 module.exports = User;

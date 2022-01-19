@@ -1,9 +1,10 @@
 <template>
   <div class="home">
+    <router-link :to="{ name: 'CreatePublication' }"
+      >Nouvel article</router-link
+    >
 
-    <router-link :to="{ name: 'CreatePublication' }">Nouvel article</router-link>
-    
-    <div v-if="this.publications">
+    <div v-if="publications">
       <Publication
         v-for="publication in publications"
         :key="publication.id_publication"
@@ -15,13 +16,11 @@
 
 <script>
 // @ is an alias to /src
-import NavBar from "@/components/NavBar.vue";
 const Publication = require("../components/Publication.vue");
 
 export default {
   name: "Home",
   components: {
-    NavBar,
     Publication,
   },
   computed: {
@@ -34,7 +33,7 @@ export default {
   },
   created: async function () {
     try {
-      if(!this.$store.user) {
+      if (!this.$store.user) {
         this.$router.push({ name: "Login" });
       }
       await this.$store.dispatch("getAllPublications");
