@@ -8,11 +8,147 @@ const Publication = function (publication) {
   this.users_disliked = publication.users_disliked || [];
 };
 
-Publication.sendQuery = (sql, values) => {
-  connection.query(sql, values, (err, result) => {
-    if (err) throw err;
-    return result;
-  });
+Publication.getAllPublications = (callback) => {
+  connection.query(
+    `SELECT pub.*, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
+  LEFT JOIN users
+  ON pub.author_id = users.id_user
+  LEFT JOIN comments
+  ON comments.pub_id = pub.id_publication
+  GROUP BY pub.id_publication
+  ORDER BY pub.date_created DESC`,
+    (err, results) => {
+      if (err) {
+        callback(err, null);
+      }
+      results.forEach(
+        (pub) => (pub.avatar = process.env.URL + process.env.DIR + pub.avatar)
+      );
+
+      callback(null, results);
+    }
+  );
+};
+
+Publication.createPublication = (publication, callback) => {
+  connection.query(
+    `INSERT INTO publications (author_id, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?, ?, ?, NOW(), NOW())`,
+    [
+      publication.author_id,
+      publication.text,
+      publication.users_liked,
+      publication.users_disliked,
+    ],
+    (err, result) => {
+      if (err) {
+        callback(err, null);
+      }
+
+      publication.id_publication = result.insertId;
+
+      callback(null, publication);
+    }
+  );
+};
+
+Publication.modifyPublication = (publication, callback) => {
+  connection.query(
+    `UPDATE publications SET text = ?, date_modified = NOW() WHERE id_publication = ?`,
+    [publication.text, publication.id_publication],
+    (err, result) => {
+      if (err) {
+        callback(err);
+      }
+
+      callback(null);
+    }
+  );
+};
+
+Publication.deletePublication = (id, callback) => {
+  connection.query(
+    `DELETE FROM publications  WHERE id_publication = ?`,
+    [id],
+    (err) => {
+      if (err) {
+        callback(err);
+      }
+
+      callback(null);
+    }
+  );
+};
+
+Publication.feedback = (data, callback) => {
+  if (data.vote == 0 && data.users_liked.includes(data.id_user)) {
+    const index = data.users_liked.findIndex((id) => {
+      id == data.id_user;
+    });
+    data.users_liked.splice(index, 1);
+
+    connection.query(
+      `UPDATE publications SET users_liked = ? WHERE id_publication = ?`,
+      [JSON.stringify(data.users_liked), data.id_publication],
+      (err) => {
+        if (err) {
+          callback(err);
+        }
+
+        callback(null);
+      }
+    );
+  }
+
+  if (data.vote == 0 && data.users_disliked.includes(data.id_user)) {
+    const index = data.users_disliked.findIndex((id) => {
+      id == data.id_user;
+    });
+    data.users_disliked.splice(index, 1);
+
+    connection.query(
+      `UPDATE publications SET users_disliked = ? WHERE id_publication = ?`,
+      [JSON.stringify(data.users_disliked), data.id_publication],
+      (err) => {
+        if (err) {
+          callback(err);
+        }
+
+        callback(null);
+      }
+    );
+  }
+
+  if (data.vote == 1) {
+    data.users_liked.push(data.id_user);
+
+    connection.query(
+      `UPDATE publications SET users_liked = ? WHERE id_publication = ?`,
+      [JSON.stringify(data.users_liked), data.id_publication],
+      (err) => {
+        if (err) {
+          callback(err);
+        }
+
+        callback(null);
+      }
+    );
+  }
+
+  if (data.vote == -1) {
+    data.users_disliked.push(data.id_user);
+
+    connection.query(
+      `UPDATE publications SET users_disliked = ? WHERE id_publication = ?`,
+      [JSON.stringify(data.users_disliked), data.id_publication],
+      (err) => {
+        if (err) {
+          callback(err);
+        }
+
+        callback(null);
+      }
+    );
+  }
 };
 
 module.exports = Publication;
