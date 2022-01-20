@@ -19,7 +19,7 @@ exports.getAllPublications = async (req, res, next) => {
 exports.createPublication = async (req, res, next) => {
   try {
     const publication = new Publication({
-      author_id: req.body.author_id,
+      author_id: req.body.id_user,
       text: req.body.text,
     });
     Publication.createPublication(publication, (err, data) => {
