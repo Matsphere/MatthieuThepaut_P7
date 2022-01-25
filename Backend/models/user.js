@@ -6,7 +6,7 @@ const User = function (user) {
   this.id_user = user.id_user;
   this.email = user.email;
   this.avatar =
-    user.avatar || process.env.URL + process.env.DIR + "default.jpeg";
+    user.avatar || process.env.URL + process.env.DIR + "default.jpg";
   this.avatar_edited = user.avatar_edited || 0;
   this.pseudo = user.pseudo;
   this.bio = user.bio;
@@ -38,6 +38,19 @@ User.signup = (user, hash, callback) => {
       }
       user.id_user = result.insertId;
       callback(null, user);
+    }
+  );
+};
+User.getUser = (id, callback) => {
+  connection.query(
+    `SELECT * FROM users WHERE id_user=?`,
+    [id],
+    (err, result) => {
+      if (err) {
+        callback(err, null);
+      }
+
+      callback(null, result[0]);
     }
   );
 };

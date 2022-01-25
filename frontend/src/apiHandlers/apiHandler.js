@@ -19,7 +19,15 @@ export default {
     );
   },
 
-  async signup(data) {
+  logout() {
+    return axiosClient.get(
+      "/api/auth/logout");
+  },
+
+  
+
+
+  signup(data) {
     return axiosClient.post(
       "/api/auth/signup",
       JSON.stringify({

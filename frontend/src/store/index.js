@@ -5,22 +5,25 @@ import apiHandler from "../apiHandlers/apiHandler";
 export default createStore({
   state: {
     publications: [],
-    user: {},
+    user: null,
   },
   mutations: {
     setUser(state, data) {
       state.user = data;
     },
-    setPublications(data) {
+    clearUser(state) {
+      state.user = {};
+    },
+    setPublications(state, data) {
       state.publications = data;
     },
-    setComments(data) {
+    setComments(state, data) {
       state.publications[data.index].comments = data.comments;
     },
-    addComment(data) {
+    addComment(state, data) {
       state.publications[data.index].splice(0, 0, data.comment);
     },
-    addPublication(data) {
+    addPublication(state, data) {
       state.publications.splice(0, 0, data);
     },
   },
@@ -34,9 +37,18 @@ export default createStore({
       console.log(this.state.user);
     },
 
+    async logout({ commit }) {
+      const response = await apiHandler.logout();
+      if (response.statusText != "OK") {
+        throw response;
+      }
+      commit("clearUser");
+      console.log(this.state.user);
+    },
+
     async signup({ commit }, userInfo) {
       const response = await apiHandler.signup(userInfo);
-      if (!response.ok) {
+      if (response.statusText != "OK") {
         throw response;
       }
       const data = response.json();
@@ -44,7 +56,7 @@ export default createStore({
     },
     async getAllPublications({ commit }) {
       const response = await apiHandler.getAllPublications();
-      if (!response.ok) {
+      if (response.statusText != "OK") {
         throw response;
       }
       const data = response.json();
@@ -52,7 +64,7 @@ export default createStore({
     },
     async createPublication({ commit }, publication) {
       const response = await apiHandler.createPublication(publication);
-      if (!response.ok) {
+      if (response.statusText != "OK") {
         throw response;
       }
       const data = response.json();
@@ -62,7 +74,7 @@ export default createStore({
 
     async getAllComments({ commit }, publicationId) {
       const response = await apiHandler.getAllComments(publicationId);
-      if (!response.ok) {
+      if (response.statusText != "OK") {
         throw response;
       }
       const data = response.json();

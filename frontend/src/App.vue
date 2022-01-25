@@ -21,19 +21,29 @@ export default {
   },
   computed: {
     user() {
-      return this.$store.user;
+      return this.$store.state.user;
     },
   },
 };
 </script>
 
 <style>
+body {
+  margin: 0;
+}
+figure {
+  margin: 0;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+a {
+  text-decoration: none;
 }
 
 #nav {

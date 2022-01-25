@@ -16,7 +16,7 @@
 
 <script>
 // @ is an alias to /src
-const Publication = require("../components/Publication.vue");
+import Publication from "../components/Publication.vue";
 
 export default {
   name: "Home",
@@ -33,12 +33,12 @@ export default {
   },
   created: async function () {
     try {
-      if (!this.$store.user) {
+      if (!this.$store.state.user) {
         this.$router.push({ name: "Login" });
       }
       await this.$store.dispatch("getAllPublications");
     } catch (err) {
-      if (err.status == 401) {
+      if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }
     }

@@ -3,8 +3,14 @@ const connection = require("../db");
 
 module.exports = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+    const { cookies } = req;
+
+    if (!cookies || !cookies.token) {
+      return res.status(401).json({
+        message: "Cookie manquant",
+      });
+    }
+    const decodedToken = jwt.verify(cookies.token, "RANDOM_TOKEN_SECRET");
     const userId = decodedToken.userId;
 
     await connection.query(
@@ -12,13 +18,15 @@ module.exports = async (req, res, next) => {
       [userId],
       (err, result) => {
         if (err) {
-          res.status(500).json(err);
+          return res.status(500).json(err);
         } else if (!result[0])
-          res.status(401).json({ message: "Utilisateur non authorisé!" });
+          return res
+            .status(401)
+            .json({ message: "Utilisateur non authorisé!" });
         else next();
       }
     );
   } catch (err) {
-    res.status(401).json({ err });
+    res.status(401).json(err);
   }
 };

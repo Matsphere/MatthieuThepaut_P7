@@ -8,9 +8,15 @@
     </figure>
     <form @submit.prevent="submitData" class="form">
       <label for="email">E-mail :</label>
-      <input type="text" id="email" required />
+      <input type="text" id="email" required v-model="userInfo.email" />
       <label for="password">Mot de passe :</label>
-      <input type="password" id="password" required minlength="8" />
+      <input
+        type="password"
+        id="password"
+        required
+        minlength="8"
+        v-model="userInfo.password"
+      />
       <button type="submit" class="button">Connexion</button>
     </form>
     <p>Pas encore membre ?</p>
@@ -19,14 +25,20 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      userInfo: {
+        email: "",
+        password: "",
+      },
+    };
+  },
   methods: {
     async submitData() {
       try {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
         const data = {
-          email: email,
-          password: password,
+          email: this.userInfo.email,
+          password: this.userInfo.password,
         };
         await this.$store.dispatch("login", data);
         this.$router.push({ name: "Acceuil" });

@@ -84,12 +84,37 @@ exports.login = async (req, res, next) => {
   }
 };
 
+exports.logout = (req, res) => {
+  try {
+    res.clearCookie("token");
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const id = req.body.params;
+    User.getUser(id, (err, user) => {
+      if (err) {
+        res.status(500).json(err);
+      }
+      if (!user) {
+        res.status(404).json({ message: "Un problème est survenu!" });
+      }
+      res.status(200).json(user);
+    });
+  } catch (err) {
+    res.status(400).json({ message: "Un problème est survenu!" });
+  }
+};
+
 exports.editInfo = async (req, res, next) => {
   try {
     const user = new User({
       pseudo: req.body.pseudo,
       bio: req.body.bio,
-      id_user: req.body.userId,
+      id_user: req.params.id,
     });
 
     User.editInfo(user, (err) => {
@@ -106,18 +131,17 @@ exports.editInfo = async (req, res, next) => {
 exports.editAvatar = async (req, res) => {
   try {
     const user = new User({
-      id_user: req.body.userId,
+      id_user: req.params.id,
       avatar: req.file.filename,
       avatar_edited: req.body.avatar_edited,
     });
 
-   await User.editAvatar(user,  (err) => {
+    await User.editAvatar(user, (err) => {
       if (err) {
         res.status(500).json(err);
       }
 
       res.status(200).json({ message: "Profil modifié" });
-      
     });
 
     if (user.avatar_edited == 1) {
@@ -125,8 +149,6 @@ exports.editAvatar = async (req, res) => {
         if (err) throw err;
       });
     }
-
-    
   } catch (err) {
     res.status(400).json({ error: err, message: "Un Problème est survenu!" });
   }

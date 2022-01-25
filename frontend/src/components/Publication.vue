@@ -13,10 +13,9 @@
       <i class="far fa-thumbs-down"></i>
       <span>N°</span>
     </div>
-    <!-- <p @click="displayComments" v-if="!publication.comments">
+    <p @click="displayComments" v-if="!publication.comments">
       Afficher les commentaires
     </p>
-    
 
     <div v-else>
       <Comment
@@ -24,7 +23,7 @@
         :key="comment.id_comment"
         :comment="comment"
       />
-    </div> -->
+    </div>
   </div>
 </template>
 

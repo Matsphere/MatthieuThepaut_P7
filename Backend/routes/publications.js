@@ -7,7 +7,6 @@ const PublicationsCtrl = require("../controllers/publications");
 const CommentsCtrl = require("../controllers/comments");
 
 router.get("/", auth, PublicationsCtrl.getAllPublications);
-router.get("/:id", auth, PublicationsCtrl.getOnePublication);
 router.post("/", auth, PublicationsCtrl.createPublication);
 router.put("/:id", auth, PublicationsCtrl.modifyPublication);
 router.delete("/:id", auth, PublicationsCtrl.deletePublication);

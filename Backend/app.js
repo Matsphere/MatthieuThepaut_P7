@@ -4,7 +4,7 @@ const connection = require("./db");
 const publicationsRoutes = require("./routes/publications");
 const userRoutes = require("./routes/user");
 const cookieParser = require("cookie-parser");
-// const path = require("path");
+const path = require("path");
 // const helmet = require("helmet");
 // const morgan = require("morgan");
 // const clean = require("xss-clean");
@@ -31,13 +31,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use(morgan("tiny"));
-// app.use(helmet());
-// app.use(clean());
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/publications", publicationsRoutes);
 app.use("/api/auth", userRoutes);
-// app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;
