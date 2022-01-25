@@ -1,10 +1,10 @@
 <template>
   <div class="home">
-    <router-link :to="{ name: 'CreatePublication' }"
+    <router-link class="new_article" :to="{ name: 'CreatePublication' }"
       >Nouvel article</router-link
     >
 
-    <div v-if="publications">
+    <div v-if="publications" class="publication">
       <Publication
         v-for="publication in publications"
         :key="publication.id_publication"
@@ -46,3 +46,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.new_article {
+  background-color: blue;
+  padding: 20px;
+  border-radius: 10%;
+  color: white;
+}
+
+.publication {
+  margin-top: 40px;
+}
+</style>

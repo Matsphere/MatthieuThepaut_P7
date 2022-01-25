@@ -1,42 +1,37 @@
 <template>
   <div class="publication">
-    <div>
+    <router-link
+      class="author"
+      :to="{ name: 'Profil', params: { id: publication.author_id } }"
+    >
       <figure>
-        <img :src="publication.avatar" alt="Avatar de l'auteur" />
+        <img
+          :src="publication.avatar"
+          alt="Avatar de l'auteur"
+          class="avatar"
+        />
       </figure>
       <p>{{ this.publication.pseudo }}</p>
-    </div>
-    <p>{{ this.publication.text }}</p>
-    <div>
+    </router-link>
+    <div class="underline"></div>
+    <p class="text">{{ this.publication.text }}</p>
+    <div class="underline"></div>
+    <div class="reaction">
       <i class="far fa-thumbs-up"></i>
       <span>N°</span>
       <i class="far fa-thumbs-down"></i>
       <span>N°</span>
-    </div>
-    <p @click="displayComments" v-if="!publication.comments">
-      Afficher les commentaires
-    </p>
-
-    <div v-else>
-      <Comment
-        v-for="comment in publication.comments"
-        :key="comment.id_comment"
-        :comment="comment"
-      />
+      <p @click="displayComments">Commenter</p>
     </div>
   </div>
 </template>
 
 <script>
-const Comment = require("./Comment.vue");
 export default {
   name: "Publication",
-  components: {
-    Comment,
-  },
+  components: {},
   props: {
-    Publication: Object,
-    User: Object,
+    publication: Object,
   },
   methods: {
     async displayComments() {
@@ -52,4 +47,36 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
+<style scoped>
+.publication {
+  margin: auto;
+  width: 60%;
+  border: 1px solid;
+}
+.author {
+  display: flex;
+  align-items: center;
+}
+.avatar {
+  margin: 10px;
+  height: 100px;
+}
+.underline {
+  border: 1px solid;
+  width: 80%;
+  margin: auto;
+}
+.reaction {
+  width: 50%;
+  margin: 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.far {
+  margin: 5px;
+}
+span {
+  margin: 5px;
+}
+</style>

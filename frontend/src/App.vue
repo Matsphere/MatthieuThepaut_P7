@@ -46,16 +46,11 @@ a {
   text-decoration: none;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
+.nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.nav {
+  margin-bottom: 40px;
 }
 </style>

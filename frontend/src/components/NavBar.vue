@@ -50,7 +50,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   border-bottom: 10px solid blue;
-  margin-bottom: 10px;
 }
 
 a {
