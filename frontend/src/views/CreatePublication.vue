@@ -21,16 +21,18 @@ export default {
       text: "",
     };
   },
-  method: {
+  methods: {
     async submitData() {
       try {
         const data = {
           text: this.text,
           author_id: this.user.id_user,
         };
+        console.log(data);
         await this.$store.dispatch("createPublication", data);
+        this.$router.push({ name: "Acceuil" });
       } catch (err) {
-        console.log(err);
+        console.log(err.response);
       }
     },
   },

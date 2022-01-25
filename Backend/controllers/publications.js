@@ -6,10 +6,10 @@ exports.getAllPublications = async (req, res, next) => {
   try {
     Publication.getAllPublications((err, data) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json(data);
+      return res.status(200).json(data);
     });
   } catch (err) {
     res.status(400).json({ err });
@@ -19,15 +19,15 @@ exports.getAllPublications = async (req, res, next) => {
 exports.createPublication = async (req, res, next) => {
   try {
     const publication = new Publication({
-      author_id: req.body.id_user,
+      author_id: req.body.author_id,
       text: req.body.text,
     });
+
     Publication.createPublication(publication, (err, data) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
-
-      res.status(200).json(data);
+      return res.status(200).json(data);
     });
   } catch (err) {
     res.status(400).json({ err });
@@ -42,10 +42,10 @@ exports.modifyPublication = async (req, res, next) => {
     });
     Publication.modifyPublication(publication, (err) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json({ message: "Publication modifiée" });
+      return res.status(200).json({ message: "Publication modifiée" });
     });
   } catch (err) {
     res.status(400).json({ err });
@@ -56,10 +56,10 @@ exports.deletePublication = async (req, res, next) => {
   try {
     Publication.deletePublication(req.params.id, (err) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json({ message: "Publication supprimée" });
+      return res.status(200).json({ message: "Publication supprimée" });
     });
   } catch (err) {
     res.status(400).json({ err });
@@ -78,10 +78,10 @@ exports.feedback = async (req, res, next) => {
 
     Publication.feedback(data, (err) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json({ message: "Vote enregistré!" });
+      return res.status(200).json({ message: "Vote enregistré!" });
     });
   } catch (err) {
     res.status(400).json({ err });

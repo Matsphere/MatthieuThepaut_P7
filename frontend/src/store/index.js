@@ -34,7 +34,6 @@ export default createStore({
         throw response;
       }
       commit("setUser", response.data);
-      console.log(this.state.user);
     },
 
     async logout({ commit }) {
@@ -51,7 +50,7 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      const data = response.json();
+      const data = response.data;
       commit("setUser", data);
     },
     async getAllPublications({ commit }) {
@@ -59,7 +58,7 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      const data = response.json();
+      const data = response.data;
       commit("setPublications", data);
     },
     async createPublication({ commit }, publication) {
@@ -67,9 +66,8 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      const data = response.json();
+      const data = response.data;
       commit("addPublication", data);
-      this.$router.push({ name: "Acceuil" });
     },
 
     async getAllComments({ commit }, publicationId) {
@@ -77,7 +75,7 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      const data = response.json();
+      const data = response.data;
       const index = state.publications.findIndex(
         (pub) => pub.id_publication == publicationId
       );

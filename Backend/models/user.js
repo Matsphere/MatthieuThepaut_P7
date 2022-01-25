@@ -21,9 +21,10 @@ User.login = (email, callback) => {
     (err, result) => {
       if (err) {
         callback(err, null);
+      } else {
+        result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
+        callback(null, result[0]);
       }
-      result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
-      callback(null, result[0]);
     }
   );
 };
@@ -35,9 +36,10 @@ User.signup = (user, hash, callback) => {
     (err, result) => {
       if (err) {
         callback(err, null);
+      } else {
+        user.id_user = result.insertId;
+        callback(null, user);
       }
-      user.id_user = result.insertId;
-      callback(null, user);
     }
   );
 };
@@ -48,9 +50,9 @@ User.getUser = (id, callback) => {
     (err, result) => {
       if (err) {
         callback(err, null);
+      } else {
+        callback(null, result[0]);
       }
-
-      callback(null, result[0]);
     }
   );
 };
@@ -62,8 +64,9 @@ User.editInfo = (user, callback) => {
     (err) => {
       if (err) {
         callback(err);
+      } else {
+        callback(null);
       }
-      callback(null);
     }
   );
 };
@@ -76,8 +79,9 @@ User.editAvatar = (user, callback) => {
   connection.query(sql, [user.avatar, user.id_user], (err) => {
     if (err) {
       callback(err);
+    } else {
+      callback(null);
     }
-    callback(null);
   });
 };
 

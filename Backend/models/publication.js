@@ -20,33 +20,36 @@ Publication.getAllPublications = (callback) => {
     (err, results) => {
       if (err) {
         callback(err, null);
-      }
-      results.forEach(
-        (pub) => (pub.avatar = process.env.URL + process.env.DIR + pub.avatar)
-      );
+      } else {
+        results.forEach((pub) => {
+          pub.avatar = process.env.URL + process.env.DIR + pub.avatar;
+          pub.users_liked = JSON.parse(pub.users_liked);
+          pub.users_disliked = JSON.parse(pub.users_disliked);
+        });
 
-      callback(null, results);
+        callback(null, results);
+      }
     }
   );
 };
 
 Publication.createPublication = (publication, callback) => {
   connection.query(
-    `INSERT INTO publications (author_id, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?, ?, ?, NOW(), NOW())`,
+    `INSERT INTO publications (author_id, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?, ?, ?, NOW(),NOW())`,
     [
       publication.author_id,
       publication.text,
-      publication.users_liked,
-      publication.users_disliked,
+      JSON.stringify(publication.users_liked),
+      JSON.stringify(publication.users_disliked),
     ],
     (err, result) => {
       if (err) {
         callback(err, null);
+      } else {
+        publication.id_publication = result.insertId;
+
+        callback(null, publication);
       }
-
-      publication.id_publication = result.insertId;
-
-      callback(null, publication);
     }
   );
 };
@@ -58,9 +61,9 @@ Publication.modifyPublication = (publication, callback) => {
     (err, result) => {
       if (err) {
         callback(err);
+      } else {
+        callback(null);
       }
-
-      callback(null);
     }
   );
 };
@@ -72,9 +75,9 @@ Publication.deletePublication = (id, callback) => {
     (err) => {
       if (err) {
         callback(err);
+      } else {
+        callback(null);
       }
-
-      callback(null);
     }
   );
 };
@@ -92,9 +95,9 @@ Publication.feedback = (data, callback) => {
       (err) => {
         if (err) {
           callback(err);
+        } else {
+          callback(null);
         }
-
-        callback(null);
       }
     );
   }
@@ -111,9 +114,9 @@ Publication.feedback = (data, callback) => {
       (err) => {
         if (err) {
           callback(err);
+        } else {
+          callback(null);
         }
-
-        callback(null);
       }
     );
   }
@@ -127,9 +130,9 @@ Publication.feedback = (data, callback) => {
       (err) => {
         if (err) {
           callback(err);
+        } else {
+          callback(null);
         }
-
-        callback(null);
       }
     );
   }
@@ -143,9 +146,9 @@ Publication.feedback = (data, callback) => {
       (err) => {
         if (err) {
           callback(err);
+        } else {
+          callback(null);
         }
-
-        callback(null);
       }
     );
   }

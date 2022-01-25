@@ -17,9 +17,10 @@ Comment.getAllComments = (id, callback) => {
     (err, results) => {
       if (err) {
         callback(err, null);
-      }
+      } else {
 
       callback(null, results);
+      }
     }
   );
 };
@@ -31,11 +32,12 @@ Comment.createComment = (comment, callback) => {
     (err, result) => {
       if (err) {
         callback(err, null);
-      }
+      } else {
 
       comment.id_comment = result.insertId;
 
       callback(null, comment);
+      }
     }
   );
 };
@@ -47,9 +49,10 @@ Comment.modifyComment = (id, comment, callback) => {
     (err) => {
       if (err) {
         callback(err);
-      }
+      } else {
 
       callback(null);
+      }
     }
   );
 };
@@ -58,9 +61,10 @@ Comment.deleteComment = (id, callback) => {
   connection.query(`DELETE FROM comments WHERE id_comment = ?`, [id], (err) => {
     if (err) {
       callback(err);
-    }
+    } else {
 
     callback(null);
+    }
   });
 };
 

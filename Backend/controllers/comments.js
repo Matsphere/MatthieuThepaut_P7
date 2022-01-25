@@ -6,10 +6,10 @@ exports.getAllComments = async (req, res) => {
   try {
     Comment.getAllComments(req.body.pub_id, (err, results) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json(results);
+      return res.status(200).json(results);
     });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
@@ -26,10 +26,10 @@ exports.createComment = async (req, res) => {
 
     Comment.createComment(comment, (err, comment) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(201).json(comment);
+      return res.status(201).json(comment);
     });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
@@ -40,10 +40,10 @@ exports.modifyComment = async (req, res) => {
   try {
     Comment.modifyComment(req.params.id, req.body.comment, (err) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json({ message: "Commentaire modifié!" });
+      return res.status(200).json({ message: "Commentaire modifié!" });
     });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
@@ -54,10 +54,10 @@ exports.deleteComment = async (req, res) => {
   try {
     Comment.deleteComment(req.params.id, (err) => {
       if (err) {
-        res.status(500).json(err);
+        return res.status(500).json(err);
       }
 
-      res.status(200).json({ message: "Commentaire supprimé!" });
+      return res.status(200).json({ message: "Commentaire supprimé!" });
     });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
