@@ -46,6 +46,7 @@ export default {
         };
         console.log(data);
         await this.$store.dispatch("signup", data);
+        this.$router.push({ name: "Acceuil" });
       } catch (err) {
         console.log(err);
       }

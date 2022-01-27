@@ -2,6 +2,7 @@ const express = require("express");
 const mysql = require("mysql");
 const connection = require("./db");
 const publicationsRoutes = require("./routes/publications");
+const commentsRoutes = require("./routes/comments");
 const userRoutes = require("./routes/user");
 const cookieParser = require("cookie-parser");
 const path = require("path");
@@ -34,6 +35,7 @@ app.use((req, res, next) => {
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/publications", publicationsRoutes);
+app.use("/api/comments", commentsRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
 

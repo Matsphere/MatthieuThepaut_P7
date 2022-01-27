@@ -33,7 +33,7 @@ export default {
   },
   created: async function () {
     try {
-      if (!this.$store.state.user) {
+      if (!this.$store.state.isLogged) {
         this.$router.push({ name: "Login" });
       }
       await this.$store.dispatch("getAllPublications");

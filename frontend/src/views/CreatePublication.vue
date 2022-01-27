@@ -36,6 +36,11 @@ export default {
       }
     },
   },
+  created() {
+    if (!this.$store.state.isLogged) {
+        this.$router.push({ name: "Login" });
+      }
+  },
   computed: {
     user() {
       return this.$store.state.user;

@@ -3,7 +3,7 @@
     <figure>
       <router-link to="/">
         <img
-          src="@/assets/images/icon-left-font.svg"
+          src="../assets/images/icon-left-font.png"
           alt="Logo Groupomania"
           class="logo"
         />
@@ -36,8 +36,9 @@ export default {
     avatar: String,
   },
   methods: {
-    async logout() {
-      await this.$store.dispatch("logout");
+    logout() {
+     this.$store.commit("logout");
+     this.$router.push({name : 'Login'})
     },
   },
 };
