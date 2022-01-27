@@ -20,6 +20,7 @@
     <form v-show="editCommentMode" @submit.prevent="editComment">
       <textarea name="comment" id="text" cols="30" rows="10"></textarea>
       <button type="submit">Enregistrer</button>
+      <button @click="cancelEdit">Annuler</button>
     </form>
   </div>
 </template>
@@ -38,6 +39,10 @@ export default {
   methods: {
     toggleEditComment() {
       this.editCommentMode = true;
+    },
+
+    cancelEdit() {
+      this.editCommentMode = false;
     },
 
     async editComment() {

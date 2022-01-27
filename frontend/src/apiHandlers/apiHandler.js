@@ -62,6 +62,14 @@ export default {
     return axiosClient.post("/api/publications/", JSON.stringify(data));
   },
 
+  editPublication(data) {
+    return axiosClient.put("/api/publications/" + data.id_publication, JSON.stringify(data.text))
+  },
+
+  deletePublication(id) {
+    return axiosClient.delete("/api/publications/" + id)
+  },
+
   getAllComments(data) {
     return axiosClient.post(
       "/api/publications/comments",
