@@ -10,14 +10,14 @@
       </router-link>
     </figure>
     <router-link :to="{ name: 'Acceuil' }">Acceuil</router-link>
-    <router-link :to="{ name: 'Profil', params: { id: userId } }"
+    <router-link :to="{ name: 'Profil', params: { id_user: id_user } }"
       >Profil</router-link
     >
     <router-link @click="logout" :to="{ name: 'Login' }"
       >Déconnexion</router-link
     >
     <div class="nav_user">
-      <router-link :to="{ name: 'Profil', params: { id: userId } }">
+      <router-link :to="{ name: 'Profil', params: { id_user: id_user } }">
         <figure>
           <img :src="avatar" alt="Avatar de l'utilisateur" class="avatar" />
         </figure>
@@ -31,14 +31,14 @@
 export default {
   name: "NavBar",
   props: {
-    userId: Number,
+    id_user: Number,
     pseudo: String,
     avatar: String,
   },
   methods: {
     logout() {
-     this.$store.commit("logout");
-     this.$router.push({name : 'Login'})
+      this.$store.commit("logout");
+      this.$router.push({ name: "Login" });
     },
   },
 };

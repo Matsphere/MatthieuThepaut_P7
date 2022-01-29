@@ -7,37 +7,43 @@
       <button v-show="avatarEditMode" @click="toggleEditAvatar">
         Changer d'avatar
       </button>
-      <form v-show="editAvatar" @submit.prevent="submitAvatar">
+      <form v-show="editAvatar" @submit.prevent="submitAvatar" id="avatar">
         <input id="avatarUrl" type="file" />
-        <button type="submit">Enregistrer</button>
-        <button @click="cancelEdit">Annuler</button>
       </form>
+      <button v-show="editAvatar" type="submit" form="avatar">
+        Enregistrer
+      </button>
+      <button @click="cancelEdit" v-show="editAvatar">Annuler</button>
     </div>
     <div>
+      <h2>Pseudo :</h2>
       <p v-show="!editInfo">
         {{ this.user.pseudo }}
       </p>
+      <h2>Bio :</h2>
       <p v-show="!editInfo">
         {{ this.user.bio }}
       </p>
       <button v-show="infoEditMode" @click="toggleEditInfo">
-        Changer d'avatar
+        Modifier mon profil
       </button>
-      <form v-show="editAvatar" @submit.prevent="submitInfo">
+      <form v-show="editInfo" @submit.prevent="submitInfo" id="info">
         <label for="pseudo">Pseudo :</label>
-        <input id="pseudo" type="text" />
+        <input id="pseudo" type="text" v-model="pseudo" />
         <label for="bio">Bio :</label>
-        <textarea id="bio" name="text" rows="20" cols="70"></textarea>
-        <button type="submit">Enregistrer</button>
-        <button @click="cancelEdit">Annuler</button>
+        <textarea id="bio" name="text" v-model="bio"></textarea>
       </form>
+      <button v-show="editInfo" type="submit" form="info">Enregistrer</button>
+      <button @click="cancelEdit" v-show="editInfo">Annuler</button>
     </div>
   </div>
 </template>
 <script>
+import apiHandler from "../apiHandlers/apiHandler";
+
 export default {
   props: {
-    userId: String,
+    id_user: String,
   },
   data() {
     return {
@@ -45,6 +51,8 @@ export default {
       myProfile: false,
       editAvatar: false,
       editInfo: false,
+      pseudo: "",
+      bio: "",
     };
   },
   methods: {
@@ -59,19 +67,21 @@ export default {
     cancelEdit() {
       this.editAvatar = false;
       this.editInfo = false;
+      this.pseudo = this.user.pseudo;
+      this.bio = this.user.bio;
     },
 
     async submitInfo() {
       try {
-        const pseudo = document.getElementById("pseudo").value;
-        const bio = document.getElementById("bio").value;
         const data = {
-          pseudo: pseudo,
-          bio: bio,
+          pseudo: this.pseudo,
+          bio: this.bio,
         };
-        await this.$store.dispatch("editInfo", { data : data, id : this.userId});
+        await this.$store.dispatch("editInfo", {
+          data: data,
+          id: this.id_user,
+        });
         this.editInfo = false;
-        
       } catch (err) {
         console.log(err.response);
       }
@@ -88,7 +98,7 @@ export default {
         console.log(data);
         await this.$store.dispatch("editAvatar", {
           data: data,
-          id: this.userId,
+          id: this.id_user,
         });
         this.editAvatar = false;
       } catch (err) {
@@ -97,14 +107,25 @@ export default {
     },
   },
   created: async function () {
-    if (!this.$store.state.isLogged) {
-      this.$router.push({ name: "Login" });
-    }
+    try {
+      if (!this.$store.state.isLogged) {
+        this.$router.push({ name: "Login" });
+      }
 
-    if (this.myProfile) {
-      this.user = this.currentUser;
-    } else {
-      this.user = await this.$store.dispatch("getUser", this.userId);
+      if (this.id_user == this.$store.state.user.id_user) {
+        this.user = this.currentUser;
+      } else {
+        console.log(this.id_user);
+        const response = await apiHandler.getUser(this.id_user);
+        if (response.statusText != "OK") {
+          throw response;
+        }
+        this.user = response.data;
+      }
+      this.pseudo = this.user.pseudo;
+      this.bio = this.user.bio;
+    } catch (err) {
+      console.log(err.response);
     }
   },
   computed: {
@@ -112,16 +133,8 @@ export default {
       return this.$store.state.user;
     },
 
-    myProfile () {
-if (this.userId == this.$store.state.user.id_user) {
-  return true
-} else {
-  return false
-}
-    },
-
     avatarEditMode() {
-      if (this.myProfile && !this.editAvatar) {
+      if (this.id_user == this.$store.state.user.id_user && !this.editAvatar) {
         return true;
       } else {
         return false;
@@ -129,7 +142,7 @@ if (this.userId == this.$store.state.user.id_user) {
     },
 
     infoEditMode() {
-      if (this.myProfile && !this.editinfo) {
+      if (this.id_user == this.$store.state.user.id_user && !this.editinfo) {
         return true;
       } else {
         return false;
@@ -139,6 +152,4 @@ if (this.userId == this.$store.state.user.id_user) {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

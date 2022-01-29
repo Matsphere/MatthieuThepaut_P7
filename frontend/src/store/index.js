@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
 import { state } from "../../../Backend/db";
-import { editAvatar } from "../../../Backend/models/user";
 import apiHandler from "../apiHandlers/apiHandler";
 
 export default createStore({
@@ -15,7 +14,7 @@ export default createStore({
       state.isLogged = true;
     },
     setAvatar(state, data) {
-      state.user.avatar = daya.avatar;
+      state.user.avatar = data.avatar;
       if (data.avatar_edited == 0) {
         state.user.avatar_edited = 1;
       }
@@ -77,6 +76,7 @@ export default createStore({
     },
 
     async getUser(id) {
+      console.log(id);
       const response = await apiHandler.getUser(id);
       if (response.statusText != "OK") {
         throw response;
@@ -139,8 +139,6 @@ export default createStore({
       const index = state.publications.findIndex(
         (pub) => pub.id_publication == id_publication
       );
-
-     
 
       commit("deletePublication", index);
     },

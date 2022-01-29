@@ -3,7 +3,7 @@
     <div>
       <router-link
         class="author"
-        :to="{ name: 'Profil', params: { id: publication.author_id } }"
+        :to="{ name: 'Profil', params: { id_user: publication.author_id } }"
       >
         <figure>
           <img
@@ -45,19 +45,31 @@
       <span>N°</span>
       <p @click="displayComments">Commenter</p>
     </div>
+    <div class="underline" v-if="commentOn"></div>
+    <div v-if="commentOn">
+      <Comment
+        v-for="comment in publication.comments"
+        :key="comment.id_comment"
+        :comment="comment"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import Comment from "./Comment.vue";
 export default {
   name: "Publication",
-  components: {},
+  components: {
+    Comment,
+  },
   props: {
     publication: Object,
   },
   data() {
     return {
       editPublicationMode: false,
+      commentOn: false,
     };
   },
   methods: {
@@ -67,12 +79,14 @@ export default {
 
     cancelEdit() {
       this.editPublicationMode = false;
+      this.text = this.publication.text;
     },
 
     async displayComments() {
       try {
         const publicationId = this.publication.id_publication;
         await this.$store.dispatch("getAllComments", publicationId);
+        this.commentOn = true;
       } catch (err) {
         console.log(err);
       }
@@ -80,26 +94,37 @@ export default {
 
     async editPublication() {
       try {
-      await this.$store.dispatch("editPublication", {
-        id_publication : this.publication.id_publication,
-        text : this.text,
-      });
-     } catch (err) {
-       console.log(err.response);
-     }
+        await this.$store.dispatch("editPublication", {
+          id_publication: this.publication.id_publication,
+          text: this.text,
+        });
+      } catch (err) {
+        console.log(err.response);
+      }
     },
 
     async deletePublication() {
       try {
-        await this.$store.dispatch("deletePublication", this.publication.id_publication)
+        await this.$store.dispatch(
+          "deletePublication",
+          this.publication.id_publication
+        );
+      } catch (err) {
+        console.log(err.response);
       }
-    }
+    },
   },
-  computed : {
+  computed: {
     text() {
-      return this.publication.text
-    }
-  }
+      return this.publication.text;
+    },
+
+    myPublication() {
+      if (this.publication.author_id == this.$store.state.user.id_user) {
+        return true;
+      } else return false;
+    },
+  },
 };
 </script>
 

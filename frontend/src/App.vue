@@ -2,7 +2,7 @@
   <div>
     <NavBar
       v-if="user"
-      :userId="user.id_user"
+      :id_user="user.id_user"
       :avatar="user.avatar"
       :pseudo="user.pseudo"
       class="nav"

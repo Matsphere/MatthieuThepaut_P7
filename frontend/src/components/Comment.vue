@@ -18,7 +18,7 @@
     </div>
     <p v-show="!editCommentMode">{{ this.comment.comment }}</p>
     <form v-show="editCommentMode" @submit.prevent="editComment">
-      <textarea name="comment" id="text" cols="30" rows="10"></textarea>
+      <textarea name="comment" id="text" v-model="text"></textarea>
       <button type="submit">Enregistrer</button>
       <button @click="cancelEdit">Annuler</button>
     </form>
@@ -43,13 +43,13 @@ export default {
 
     cancelEdit() {
       this.editCommentMode = false;
+      this.text = this.comment.comment
     },
 
     async editComment() {
      try {
-      const text = document.getElementById("text").value;
       await this.$store.dispatch("editComment", {
-        comment: text,
+        comment: this.text,
         id_comment: this.comment.id_comment,
         publicationId: this.comment.pub_id,
       });
@@ -70,6 +70,10 @@ export default {
     },
   },
   computed: {
+    text() {
+      return this.comment.comment
+    },
+
     myProfile() {
       if (this.comment.author_id == this.$store.state.user.id_user) {
         return true;

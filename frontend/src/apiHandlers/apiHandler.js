@@ -1,5 +1,3 @@
-import { deleteComment } from "../../../Backend/models/comment";
-
 const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -37,14 +35,19 @@ export default {
   },
 
   getUser(id) {
-    return axiosClient.get("/api/auth/profile/" + id);
+    const url = "/api/auth/profile/" + id;
+    return axiosClient.get(url);
   },
 
   editAvatar(data, id) {
-    return axiosClient.post(
-      "/api/auth/profile/" + id + "/avatar",
-      JSON.stringify(data)
-    );
+    // const form = new FormData();
+    // form.append("file", data.avatar);
+    return axiosClient.post("/api/auth/profile/" + id + "/avatar", {
+      data: {
+        oldAvatar: data.oldAvatar,
+        avatar_edited: data.avatar_edited,
+      },
+    });
   },
 
   editInfo(data, id) {
@@ -63,11 +66,14 @@ export default {
   },
 
   editPublication(data) {
-    return axiosClient.put("/api/publications/" + data.id_publication, JSON.stringify(data.text))
+    return axiosClient.put(
+      "/api/publications/" + data.id_publication,
+      JSON.stringify(data.text)
+    );
   },
 
   deletePublication(id) {
-    return axiosClient.delete("/api/publications/" + id)
+    return axiosClient.delete("/api/publications/" + id);
   },
 
   getAllComments(data) {

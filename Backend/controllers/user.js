@@ -94,15 +94,15 @@ exports.logout = (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const id = req.body.params;
+    const id = req.params.id;
     User.getUser(id, (err, user) => {
       if (err) {
-       return res.status(500).json(err);
+        return res.status(500).json(err);
       }
       if (!user) {
         return res.status(404).json({ message: "Un problème est survenu!" });
       }
-        return res.status(200).json(user);
+      return res.status(200).json(user);
     });
   } catch (err) {
     res.status(400).json({ message: "Un problème est survenu!" });
@@ -121,7 +121,7 @@ exports.editInfo = async (req, res, next) => {
       if (err) {
         return res.status(500).json(err);
       }
-        return res.status(200).json({ message: "Profil modifié" });
+      return res.status(200).json({ message: "Profil modifié" });
     });
   } catch (err) {
     res.status(400).json({ error: err, message: "Un problème est survenu!" });
@@ -130,12 +130,13 @@ exports.editInfo = async (req, res, next) => {
 
 exports.editAvatar = async (req, res) => {
   try {
+    console.log(req);
     const user = new User({
       id_user: req.params.id,
       avatar: req.file.filename,
       avatar_edited: req.body.avatar_edited,
     });
-
+    console.log(user);
     await User.editAvatar(user, (err) => {
       if (err) {
         return res.status(500).json(err);
