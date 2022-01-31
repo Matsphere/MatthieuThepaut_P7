@@ -9,17 +9,21 @@ const Comment = function (comment) {
 
 Comment.getAllComments = (id, callback) => {
   connection.query(
-    `SELECT com.*, users.pseudo, users.avatar FROM comments com WHERE pub_id = ?
-  LEFT JOIN users 
-  ON users.id_user = com.author_id
-  ORDER BY date_created DESC`,
+    `SELECT com.*, users.pseudo, users.avatar FROM comments com 
+   LEFT JOIN users 
+   ON users.id_user = com.author_id
+   WHERE pub_id = ?
+   ORDER BY date_created DESC`,
     [id],
     (err, results) => {
       if (err) {
+        console.log(err);
         callback(err, null);
       } else {
-
-      callback(null, results);
+        results.forEach((com) => {
+          com.avatar = process.env.URL + process.env.DIR + com.avatar;
+        });
+        callback(null, results);
       }
     }
   );
@@ -33,10 +37,9 @@ Comment.createComment = (comment, callback) => {
       if (err) {
         callback(err, null);
       } else {
+        comment.id_comment = result.insertId;
 
-      comment.id_comment = result.insertId;
-
-      callback(null, comment);
+        callback(null, comment);
       }
     }
   );
@@ -50,8 +53,7 @@ Comment.modifyComment = (id, comment, callback) => {
       if (err) {
         callback(err);
       } else {
-
-      callback(null);
+        callback(null);
       }
     }
   );
@@ -62,8 +64,7 @@ Comment.deleteComment = (id, callback) => {
     if (err) {
       callback(err);
     } else {
-
-    callback(null);
+      callback(null);
     }
   });
 };

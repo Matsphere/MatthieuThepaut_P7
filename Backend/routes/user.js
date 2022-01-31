@@ -15,7 +15,6 @@ const limiter = rateLimit({
 
 router.post("/signup", userCtrl.signup);
 router.post("/login", limiter, userCtrl.login);
-router.get("/logout", userCtrl.logout);
 router.get("/profile/:id", auth, userCtrl.getUser);
 router.post("/profile/:id/info", auth, userCtrl.editInfo);
 router.post("/profile/:id/avatar", auth, multer, userCtrl.editAvatar);

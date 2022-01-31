@@ -15,10 +15,10 @@
         <p>{{ this.publication.pseudo }}</p>
         ,</router-link
       >
-      <a @click="toggleEditPublication" v-if="myPublication"
+      <a @click.prevent="toggleEditPublication" href="#" v-if="myPublication"
         ><i class="fas fa-edit"></i
       ></a>
-      <a @click="deletePublication" v-if="myPublication"
+      <a @click.prevent="deletePublication" href="#" v-if="myPublication"
         ><i class="fas fa-trash-alt"></i
       ></a>
     </div>
@@ -39,25 +39,29 @@
     </form>
     <div class="underline"></div>
     <div class="reaction">
-      <a v-show="!isLiked" @click="sendLike">
+      <a v-show="!isLiked" href="#" @click.prevent="sendLike">
         <i class="far fa-thumbs-up thumbUp"></i>
       </a>
-      <a v-show="isLiked" @click="cancelLike">
+      <a v-show="isLiked" href="#" @click.prevent="cancelLike">
         <i class="fas fa-thumbs-up"></i>
       </a>
       <span>{{ this.likes }}</span>
-      <a v-show="!isDisliked" @click="sendDisike">
+      <a v-show="!isDisliked" href="#" @click.prevent="sendDislike">
         <i class="far fa-thumbs-down thumbDown"></i>
       </a>
-      <a v-show="isDisliked" @click="cancelDislike">
+      <a v-show="isDisliked" href="#" @click.prevent="cancelDislike">
         <i class="fas fa-thumbs-down"></i>
       </a>
 
       <span>{{ this.dislikes }}</span>
-      <p @click="displayComments">Commenter</p>
+      <button @click="displayComments">Commenter</button>
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
+      <form @submit.prevent="createComment">
+        <textarea name="comment" id="comment" v-model="comment"></textarea>
+        <button type="submit">Publier le commentaire</button>
+      </form>
       <Comment
         v-for="comment in publication.comments"
         :key="comment.id_comment"
@@ -81,18 +85,23 @@ export default {
     return {
       editPublicationMode: false,
       commentOn: false,
-      text: this.publication.text,
+      text: "",
+      comment: "",
     };
   },
   created() {
+    this.text = this.publication.text;
+  },
+  mounted() {
     const thumbUp = document.querySelector(".thumbUp");
+
     const thumbDown = document.querySelector(".thumbDown");
 
-    if (isLiked) {
+    if (this.isLiked) {
       thumbDown.classList.add("disabled");
     }
 
-    if (isDisliked) {
+    if (this.isDisliked) {
       thumbUp.classList.add("disabled");
     }
   },
@@ -108,9 +117,24 @@ export default {
 
     async displayComments() {
       try {
-        const publicationId = this.publication.id_publication;
-        await this.$store.dispatch("getAllComments", publicationId);
+        await this.$store.dispatch(
+          "getAllComments",
+          this.publication.id_publication
+        );
         this.commentOn = true;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+
+    async createComment() {
+      try {
+        await this.$store.dispatch("createComment", {
+          comment: this.comment,
+          author_id: this.$store.state.user.id_user,
+          pub_id: this.publication.id_publication,
+        });
+        this.comment = "";
       } catch (err) {
         console.log(err);
       }
@@ -122,8 +146,9 @@ export default {
           id_publication: this.publication.id_publication,
           text: this.text,
         });
+        this.editPublicationMode = false;
       } catch (err) {
-        console.log(err.response);
+        console.log(err);
       }
     },
 
@@ -143,14 +168,14 @@ export default {
         const vote = 1;
         await this.$store.dispatch("feedback", {
           vote: vote,
-          id_publication: this.publiation.id_publication,
+          id_publication: this.publication.id_publication,
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
 
         document.querySelector(".thumbDown").classList.add("disabled");
       } catch (err) {
-        console.log(err.response);
+        console.log(err);
       }
     },
 
@@ -159,7 +184,7 @@ export default {
         const vote = 0;
         await this.$store.dispatch("feedback", {
           vote: vote,
-          id_publication: this.publiation.id_publication,
+          id_publication: this.publication.id_publication,
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
@@ -174,7 +199,7 @@ export default {
         const vote = -1;
         await this.$store.dispatch("feedback", {
           vote: vote,
-          id_publication: this.publiation.id_publication,
+          id_publication: this.publication.id_publication,
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
@@ -189,7 +214,7 @@ export default {
         const vote = 0;
         await this.$store.dispatch("feedback", {
           vote: vote,
-          id_publication: this.publiation.id_publication,
+          id_publication: this.publication.id_publication,
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
@@ -207,15 +232,19 @@ export default {
     },
 
     isLiked() {
-      if (this.publication.users_liked.includes(this.$store.user.id_user)) {
+      if (
+        this.publication.users_liked.includes(this.$store.state.user.id_user)
+      ) {
         return true;
       } else {
         return false;
       }
     },
 
-    isDisiked() {
-      if (this.publication.users_disliked.includes(this.$store.user.id_user)) {
+    isDisliked() {
+      if (
+        this.publication.users_disliked.includes(this.$store.state.user.id_user)
+      ) {
         return true;
       } else {
         return false;
@@ -227,7 +256,7 @@ export default {
     },
 
     dislikes() {
-      return this.publiation.users_disliked.length;
+      return this.publication.users_disliked.length;
     },
   },
 };

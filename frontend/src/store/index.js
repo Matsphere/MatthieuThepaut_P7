@@ -1,5 +1,4 @@
 import { createStore } from "vuex";
-import { state } from "../../../Backend/db";
 import apiHandler from "../apiHandlers/apiHandler";
 
 export default createStore({
@@ -31,33 +30,60 @@ export default createStore({
       state.publications = data;
     },
     setFeedback(state, data) {
-     state.publications[data.index].users_liked=data.users_liked;
-     state.publications[data.index].users_disliked = data.users_disliked
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == data.id_publication
+      );
+      state.publications[index].users_liked = data.users_liked;
+      state.publications[index].users_disliked = data.users_disliked;
     },
     setComments(state, data) {
-      state.publications[data.index].comments = data.comments;
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == data.id_publication
+      );
+      state.publications[index].comments = data.comments;
     },
     addComment(state, data) {
-      state.publications[data.index].splice(0, 0, data.comment);
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == data.pub_id
+      );
+      data.avatar = state.user.avatar;
+      state.publications[index].comments.push(data);
     },
     editComment(state, data) {
-      state.publications[data.publicationIndex].comments[
-        data.commentIndex
-      ].comment = data.comment;
+      const indexPublication = state.publications.findIndex(
+        (pub) => pub.id_publication == data.id_publication
+      );
+      const indexComment = state.publications[
+        indexPublication
+      ].comments.findIndex((com) => com.id_comment == data.id_comment);
+
+      state.publications[indexPublication].comments[indexComment].comment =
+        data.comment;
     },
     deleteComment(state, data) {
-      state.publications[data.publicationIndex].comments.splice(
-        data.commentIndex,
-        1
+      const indexPublication = state.publications.findIndex(
+        (pub) => pub.id_publication == data.id_publication
       );
+
+      const indexComment = state.publications[
+        indexPublication
+      ].comments.findIndex((com) => com.id_comment == data.id_comment);
+
+      state.publications[indexPublication].comments.splice(indexComment, 1);
     },
     addPublication(state, data) {
       state.publications.splice(0, 0, data);
     },
     editPublication(state, data) {
-      state.publications[data.index].text = data.text;
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == data.id_publication
+      );
+      state.publications[index].text = data.text;
     },
-    deletePublication(state, index) {
+    deletePublication(state, id_publication) {
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == id_publication
+      );
       state.publications.splice(index, 1);
     },
   },
@@ -118,44 +144,37 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
+      console.log(response);
       const data = response.data;
       commit("addPublication", data);
     },
 
-    async editPublication({ commit }, state, { id_publication, text }) {
+    async editPublication({ commit }, { id_publication, text }) {
       const response = await apiHandler.editPublication(id_publication, text);
       if (response.statusText != "OK") {
         throw response;
       }
-      const index = state.publications.findIndex(
-        (pub) => pub.id_publication == id_publication
-      );
 
-      commit("editPublication", { index: index, text: text });
+      commit("editPublication", { id_publication: id_publication, text: text });
     },
 
-    async deletePublication({ commit }, state, id_publication) {
+    async deletePublication({ commit }, id_publication) {
       const response = await apiHandler.deletePublication(id_publication);
       if (response.statusText != "OK") {
         throw response;
       }
 
-      const index = state.publications.findIndex(
-        (pub) => pub.id_publication == id_publication
-      );
-
-      commit("deletePublication", index);
+      commit("deletePublication", id_publication);
     },
 
     async feedback(
-      { commit },
-      state,
+      { commit, state },
       { vote, id_publication, users_liked, users_disliked }
     ) {
       const response = await apiHandler.feedback({
         vote: vote,
         id_publication: id_publication,
-        id_user: this.user.id_user,
+        id_user: state.user.id_user,
         users_liked: users_liked,
         users_disliked: users_disliked,
       });
@@ -163,66 +182,56 @@ export default createStore({
         throw response;
       }
 
-      const index = state.publications.findIndex(
-        (pub) => pub.id_publication == id_publication
-      );
-
-      commit("setFeedback", { ...response.data, index : index });
+      commit("setFeedback", { ...response.data });
     },
 
-    async getAllComments({ commit }, state, publicationId) {
-      const response = await apiHandler.getAllComments(publicationId);
+    async getAllComments({ commit }, id_publication) {
+      const response = await apiHandler.getAllComments(id_publication);
       if (response.statusText != "OK") {
         throw response;
       }
       const data = response.data;
-      const index = state.publications.findIndex(
-        (pub) => pub.id_publication == publicationId
-      );
-      commit("setComments", { comments: data, index: index });
+
+      commit("setComments", { comments: data, id_publication: id_publication });
     },
 
-    async editComment(
-      { commit },
-      state,
-      { comment, id_comment, publicationId }
-    ) {
-      const response = await apiHandler.editComment(comment, id_comment);
+    async createComment({ commit }, data) {
+      console.log(data);
+      const response = await apiHandler.createComment(data);
+      if (response.statusText != "Created") {
+        throw response;
+      }
+
+      commit("addComment", data);
+    },
+
+    async editComment({ commit }, { comment, id_comment, id_publication }) {
+      const response = await apiHandler.editComment({
+        comment: comment,
+        id: id_comment,
+      });
       if (response.statusText != "OK") {
         throw response;
       }
-      const indexPublication = state.publications.findIndex(
-        (pub) => pub.id_publication == publicationId
-      );
 
-      const indexComment = state.publications[
-        indexPublication
-      ].comments.findIndex((com) => com.id_comment == id_comment);
+      console.log(response);
 
       commit("editComment", {
         comment: comment,
-        indexComment: indexComment,
-        indexPublication: indexPublication,
+        id_comment: id_comment,
+        id_publication: id_publication,
       });
     },
 
-    async deleteComment({ commit }, state, { id_comment, pub_id }) {
+    async deleteComment({ commit }, { id_comment, id_publication }) {
       const response = await apiHandler.deleteComment(id_comment);
       if (response.statusText != "OK") {
         throw response;
       }
 
-      const indexPublication = state.publications.findIndex(
-        (pub) => pub.id_publication == pub_id
-      );
-
-      const indexComment = state.publications[
-        indexPublication
-      ].comments.findIndex((com) => com.id_comment == id_comment);
-
       commit("deleteComment", {
-        indexComment: indexComment,
-        indexPublication: indexPublication,
+        id_comment: id_comment,
+        id_publication: id_publication,
       });
     },
   },

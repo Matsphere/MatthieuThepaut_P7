@@ -4,7 +4,7 @@ const Comment = require("../models/comment");
 
 exports.getAllComments = async (req, res) => {
   try {
-    Comment.getAllComments(req.body.pub_id, (err, results) => {
+    Comment.getAllComments(req.params.id, (err, results) => {
       if (err) {
         return res.status(500).json(err);
       }
@@ -19,7 +19,7 @@ exports.getAllComments = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const comment = new Comment({
-      author_id: req.body.id_user,
+      author_id: req.body.author_id,
       comment: req.body.comment,
       pub_id: req.params.id,
     });
@@ -38,6 +38,7 @@ exports.createComment = async (req, res) => {
 
 exports.modifyComment = async (req, res) => {
   try {
+    console.log(req.params.id);
     Comment.modifyComment(req.params.id, req.body.comment, (err) => {
       if (err) {
         return res.status(500).json(err);
@@ -46,7 +47,7 @@ exports.modifyComment = async (req, res) => {
       return res.status(200).json({ message: "Commentaire modifié!" });
     });
   } catch (err) {
-    res.status(400).json({ error: err, message: "Un problème est survenu!" });
+    res.status(410).json({ message: "Un problème est survenu!" });
   }
 };
 

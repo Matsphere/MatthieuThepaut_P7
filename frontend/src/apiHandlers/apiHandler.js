@@ -19,10 +19,6 @@ export default {
     });
   },
 
-  logout() {
-    return axiosClient.get("/api/auth/logout");
-  },
-
   signup(data) {
     return axiosClient.post("/api/auth/signup", {
       email: data.email,
@@ -59,11 +55,10 @@ export default {
     return axiosClient.post("/api/publications/", data);
   },
 
-  editPublication(data) {
-    return axiosClient.put(
-      "/api/publications/" + data.id_publication,
-      data.text
-    );
+  editPublication(id_publication, text) {
+    console.log(typeof text);
+    const url = "/api/publications/" + id_publication;
+    return axiosClient.put(url, { text: text });
   },
 
   deletePublication(id) {
@@ -78,11 +73,22 @@ export default {
   },
 
   getAllComments(data) {
-    return axiosClient.post("/api/publications/comments", { pub_id: data });
+    return axiosClient.post("/api/publications/" + data + "/comments", {
+      pub_id: data,
+    });
+  },
+
+  createComment(data) {
+    return axiosClient.post(
+      "/api/publications/" + data.pub_id + "/comment",
+      data
+    );
   },
 
   editComment(data) {
-    return axiosClient.put("/api/comments/" + data.id_comment, data.comment);
+    return axiosClient.put("/api/comments/" + data.id, {
+      comment: data.comment,
+    });
   },
 
   deleteComment(id) {
