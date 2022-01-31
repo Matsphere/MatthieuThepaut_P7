@@ -30,6 +30,10 @@ export default createStore({
     setPublications(state, data) {
       state.publications = data;
     },
+    setFeedback(state, data) {
+     state.publications[data.index].users_liked=data.users_liked;
+     state.publications[data.index].users_disliked = data.users_disliked
+    },
     setComments(state, data) {
       state.publications[data.index].comments = data.comments;
     },
@@ -118,7 +122,7 @@ export default createStore({
       commit("addPublication", data);
     },
 
-    async editPublication({ commit }, { id_publication, text }) {
+    async editPublication({ commit }, state, { id_publication, text }) {
       const response = await apiHandler.editPublication(id_publication, text);
       if (response.statusText != "OK") {
         throw response;
@@ -130,7 +134,7 @@ export default createStore({
       commit("editPublication", { index: index, text: text });
     },
 
-    async deletePublication({ commit }, id_publication) {
+    async deletePublication({ commit }, state, id_publication) {
       const response = await apiHandler.deletePublication(id_publication);
       if (response.statusText != "OK") {
         throw response;
@@ -143,7 +147,30 @@ export default createStore({
       commit("deletePublication", index);
     },
 
-    async getAllComments({ commit }, publicationId) {
+    async feedback(
+      { commit },
+      state,
+      { vote, id_publication, users_liked, users_disliked }
+    ) {
+      const response = await apiHandler.feedback({
+        vote: vote,
+        id_publication: id_publication,
+        id_user: this.user.id_user,
+        users_liked: users_liked,
+        users_disliked: users_disliked,
+      });
+      if (response.statusText != "OK") {
+        throw response;
+      }
+
+      const index = state.publications.findIndex(
+        (pub) => pub.id_publication == id_publication
+      );
+
+      commit("setFeedback", { ...response.data, index : index });
+    },
+
+    async getAllComments({ commit }, state, publicationId) {
       const response = await apiHandler.getAllComments(publicationId);
       if (response.statusText != "OK") {
         throw response;
@@ -155,7 +182,11 @@ export default createStore({
       commit("setComments", { comments: data, index: index });
     },
 
-    async editComment({ commit }, { comment, id_comment, publicationId }) {
+    async editComment(
+      { commit },
+      state,
+      { comment, id_comment, publicationId }
+    ) {
       const response = await apiHandler.editComment(comment, id_comment);
       if (response.statusText != "OK") {
         throw response;
@@ -175,7 +206,7 @@ export default createStore({
       });
     },
 
-    async deleteComment({ commit }, { id_comment, pub_id }) {
+    async deleteComment({ commit }, state, { id_comment, pub_id }) {
       const response = await apiHandler.deleteComment(id_comment);
       if (response.statusText != "OK") {
         throw response;

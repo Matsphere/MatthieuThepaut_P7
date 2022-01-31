@@ -94,9 +94,9 @@ Publication.feedback = (data, callback) => {
       [JSON.stringify(data.users_liked), data.id_publication],
       (err) => {
         if (err) {
-          callback(err);
+          callback(err, null);
         } else {
-          callback(null);
+          callback(null, data);
         }
       }
     );
@@ -113,9 +113,9 @@ Publication.feedback = (data, callback) => {
       [JSON.stringify(data.users_disliked), data.id_publication],
       (err) => {
         if (err) {
-          callback(err);
+          callback(err, null);
         } else {
-          callback(null);
+          callback(null, data);
         }
       }
     );
@@ -129,9 +129,9 @@ Publication.feedback = (data, callback) => {
       [JSON.stringify(data.users_liked), data.id_publication],
       (err) => {
         if (err) {
-          callback(err);
+          callback(err, null);
         } else {
-          callback(null);
+          callback(null, data);
         }
       }
     );
@@ -145,9 +145,9 @@ Publication.feedback = (data, callback) => {
       [JSON.stringify(data.users_disliked), data.id_publication],
       (err) => {
         if (err) {
-          callback(err);
+          callback(err,null);
         } else {
-          callback(null);
+          callback(null,data);
         }
       }
     );

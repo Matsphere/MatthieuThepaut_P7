@@ -39,9 +39,20 @@
     </form>
     <div class="underline"></div>
     <div class="reaction">
-      <i class="far fa-thumbs-up"></i>
+      <a v-show="!isLiked" @click="sendLike">
+        <i class="far fa-thumbs-up"></i>
+      </a>
+      <a v-show="isLiked" @click="cancelLike">
+        <i class="fas fa-thumbs-up"></i>
+      </a>
       <span>N°</span>
-      <i class="far fa-thumbs-down"></i>
+      <a v-show="!isDisliked" @click="sendDisike">
+        <i class="far fa-thumbs-down"></i>
+      </a>
+      <a v-show="isDisliked" @click="cancelDislike">
+        <i class="fas fa-thumbs-down"></i>
+      </a>
+
       <span>N°</span>
       <p @click="displayComments">Commenter</p>
     </div>
@@ -70,6 +81,7 @@ export default {
     return {
       editPublicationMode: false,
       commentOn: false,
+      text: this.publication.text,
     };
   },
   methods: {
@@ -113,16 +125,80 @@ export default {
         console.log(err.response);
       }
     },
-  },
-  computed: {
-    text() {
-      return this.publication.text;
+
+    async sendLike() {
+      try {
+        const vote = 1;
+        await this.$store.dispatch("feedback", {
+          vote: vote,
+          id_publication: this.publiation.id_publication,
+          users_liked: this.publication.users_liked,
+        });
+      } catch (err) {
+        console.log(err.response);
+      }
     },
 
+    async cancelLike() {
+      try {
+        const vote = 0;
+        await this.$store.dispatch("feedback", {
+          vote: vote,
+          id_publication: this.publiation.id_publication,
+          users_liked: this.publication.users_liked,
+        });
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+
+    async sendDislike() {
+      try {
+        const vote = -1;
+        await this.$store.dispatch("feedback", {
+          vote: vote,
+          id_publication: this.publiation.id_publication,
+          users_disliked: this.publication.users_disliked,
+        });
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+
+    async cancelDislike() {
+      try {
+        const vote = 0;
+        await this.$store.dispatch("feedback", {
+          vote: vote,
+          id_publication: this.publiation.id_publication,
+          users_disliked: this.publication.users_disliked,
+        });
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+  },
+  computed: {
     myPublication() {
       if (this.publication.author_id == this.$store.state.user.id_user) {
         return true;
       } else return false;
+    },
+
+    isLiked() {
+      if (this.publication.users_liked.includes(this.$store.user.id_user)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    isDisiked() {
+      if (this.publication.users_disliked.includes(this.$store.user.id_user)) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

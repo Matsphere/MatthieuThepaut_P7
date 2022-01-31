@@ -76,12 +76,12 @@ exports.feedback = async (req, res, next) => {
       users_disliked: req.body.users_disliked,
     };
 
-    Publication.feedback(data, (err) => {
+    Publication.feedback(data, (err, response) => {
       if (err) {
         return res.status(500).json(err);
       }
 
-      return res.status(200).json({ message: "Vote enregistré!" });
+      return res.status(200).json(response);
     });
   } catch (err) {
     res.status(400).json({ err });

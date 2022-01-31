@@ -13,10 +13,10 @@ const axiosClient = axios.create({
 
 export default {
   login(data) {
-    return axiosClient.post(
-      "/api/auth/login",
-      JSON.stringify({ email: data.email, password: data.password })
-    );
+    return axiosClient.post("/api/auth/login", {
+      email: data.email,
+      password: data.password,
+    });
   },
 
   logout() {
@@ -24,14 +24,11 @@ export default {
   },
 
   signup(data) {
-    return axiosClient.post(
-      "/api/auth/signup",
-      JSON.stringify({
-        email: data.email,
-        password: data.password,
-        pseudo: data.pseudo,
-      })
-    );
+    return axiosClient.post("/api/auth/signup", {
+      email: data.email,
+      password: data.password,
+      pseudo: data.pseudo,
+    });
   },
 
   getUser(id) {
@@ -51,10 +48,7 @@ export default {
   },
 
   editInfo(data, id) {
-    return axiosClient.post(
-      "/api/auth/profile/" + id + "/info",
-      JSON.stringify(data)
-    );
+    return axiosClient.post("/api/auth/profile/" + id + "/info", data);
   },
 
   getAllPublications() {
@@ -62,13 +56,13 @@ export default {
   },
 
   createPublication(data) {
-    return axiosClient.post("/api/publications/", JSON.stringify(data));
+    return axiosClient.post("/api/publications/", data);
   },
 
   editPublication(data) {
     return axiosClient.put(
       "/api/publications/" + data.id_publication,
-      JSON.stringify(data.text)
+      data.text
     );
   },
 
@@ -76,18 +70,19 @@ export default {
     return axiosClient.delete("/api/publications/" + id);
   },
 
-  getAllComments(data) {
+  feedback(data) {
     return axiosClient.post(
-      "/api/publications/comments",
-      JSON.stringify({ pub_id: data })
+      "/api/publications/" + data.id_publication + "/like",
+      data
     );
   },
 
+  getAllComments(data) {
+    return axiosClient.post("/api/publications/comments", { pub_id: data });
+  },
+
   editComment(data) {
-    return axiosClient.put(
-      "/api/comments/" + data.id_comment,
-      JSON.stringify(data.comment)
-    );
+    return axiosClient.put("/api/comments/" + data.id_comment, data.comment);
   },
 
   deleteComment(id) {
