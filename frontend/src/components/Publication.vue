@@ -40,20 +40,20 @@
     <div class="underline"></div>
     <div class="reaction">
       <a v-show="!isLiked" @click="sendLike">
-        <i class="far fa-thumbs-up"></i>
+        <i class="far fa-thumbs-up thumbUp"></i>
       </a>
       <a v-show="isLiked" @click="cancelLike">
         <i class="fas fa-thumbs-up"></i>
       </a>
-      <span>N°</span>
+      <span>{{ this.likes }}</span>
       <a v-show="!isDisliked" @click="sendDisike">
-        <i class="far fa-thumbs-down"></i>
+        <i class="far fa-thumbs-down thumbDown"></i>
       </a>
       <a v-show="isDisliked" @click="cancelDislike">
         <i class="fas fa-thumbs-down"></i>
       </a>
 
-      <span>N°</span>
+      <span>{{ this.dislikes }}</span>
       <p @click="displayComments">Commenter</p>
     </div>
     <div class="underline" v-if="commentOn"></div>
@@ -83,6 +83,18 @@ export default {
       commentOn: false,
       text: this.publication.text,
     };
+  },
+  created() {
+    const thumbUp = document.querySelector(".thumbUp");
+    const thumbDown = document.querySelector(".thumbDown");
+
+    if (isLiked) {
+      thumbDown.classList.add("disabled");
+    }
+
+    if (isDisliked) {
+      thumbUp.classList.add("disabled");
+    }
   },
   methods: {
     toggleEditPublication() {
@@ -133,7 +145,10 @@ export default {
           vote: vote,
           id_publication: this.publiation.id_publication,
           users_liked: this.publication.users_liked,
+          users_disliked: this.publication.users_disliked,
         });
+
+        document.querySelector(".thumbDown").classList.add("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -146,7 +161,9 @@ export default {
           vote: vote,
           id_publication: this.publiation.id_publication,
           users_liked: this.publication.users_liked,
+          users_disliked: this.publication.users_disliked,
         });
+        document.querySelector(".thumbDown").classList.remove("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -158,8 +175,10 @@ export default {
         await this.$store.dispatch("feedback", {
           vote: vote,
           id_publication: this.publiation.id_publication,
+          users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
+        document.querySelector(".thumbUp").classList.add("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -171,8 +190,10 @@ export default {
         await this.$store.dispatch("feedback", {
           vote: vote,
           id_publication: this.publiation.id_publication,
+          users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
+        document.querySelector(".thumbUp").classList.remove("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -199,6 +220,14 @@ export default {
       } else {
         return false;
       }
+    },
+
+    likes() {
+      return this.publication.users_liked.length;
+    },
+
+    dislikes() {
+      return this.publiation.users_disliked.length;
     },
   },
 };
@@ -233,6 +262,11 @@ export default {
 }
 .far {
   margin: 5px;
+}
+
+.disabled {
+  pointer-events: none;
+  color: lightgrey;
 }
 span {
   margin: 5px;
