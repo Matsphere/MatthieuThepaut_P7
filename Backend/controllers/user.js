@@ -84,8 +84,6 @@ exports.login = async (req, res, next) => {
   }
 };
 
-
-
 exports.getUser = async (req, res) => {
   try {
     const id = req.params.id;
@@ -124,24 +122,23 @@ exports.editInfo = async (req, res, next) => {
 
 exports.editAvatar = async (req, res) => {
   try {
-    console.log(req);
     const user = new User({
       id_user: req.params.id,
       avatar: req.file.filename,
       avatar_edited: req.body.avatar_edited,
     });
-    console.log(user);
-    await User.editAvatar(user, (err) => {
+    await User.editAvatar(user, (err, avatar) => {
       if (err) {
         return res.status(500).json(err);
       }
 
-      return res.status(200).json({ message: "Profil modifié" });
+      return res.status(200).json(avatar);
     });
 
     if (user.avatar_edited == 1) {
-      fs.unlink(req.body.oldAvatar, (err) => {
-        if (err) throw err;
+      const filename = req.body.oldAvatar.split("/")[4];
+      fs.unlink("./images/" + filename, (err) => {
+        if (err) console.log(err);
       });
     }
   } catch (err) {

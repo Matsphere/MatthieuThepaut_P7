@@ -120,7 +120,10 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      commit("setAvatar", data);
+      commit("setAvatar", {
+        avatar: response.data,
+        avatar_edited: data.avatar_edited,
+      });
     },
 
     async editInfo({ commit }, { data, id }) {

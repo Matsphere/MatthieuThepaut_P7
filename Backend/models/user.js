@@ -75,12 +75,13 @@ User.editAvatar = (user, callback) => {
   const sql =
     user.avatar_edited == 0
       ? `UPDATE users SET avatar = ?, avatar_edited = 1, date_modified = NOW() WHERE id_user = ?`
-      : `UPDATE users SET avatar = ? date_modified = NOW() WHERE id_user = ?`;
+      : `UPDATE users SET avatar = ? , date_modified = NOW() WHERE id_user = ?`;
   connection.query(sql, [user.avatar, user.id_user], (err) => {
     if (err) {
-      callback(err);
+      callback(err, null);
     } else {
-      callback(null);
+      user.avatar = process.env.URL + process.env.DIR + user.avatar;
+      callback(null, user.avatar);
     }
   });
 };

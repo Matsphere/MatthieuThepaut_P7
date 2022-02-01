@@ -34,7 +34,7 @@ export default {
 
   editAvatar(data, id) {
     const form = new FormData();
-    form.append("file", data.file);
+    form.append("image", data.file, data.file.name);
     form.append("oldAvatar", data.oldAvatar);
     form.append("avatar_edited", data.avatar_edited);
     return axiosClient.post("/api/auth/profile/" + id + "/avatar", form, {

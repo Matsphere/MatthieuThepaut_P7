@@ -2,10 +2,11 @@
   <div class="login">
     <figure class="logo">
       <img
-        src="../assets/images/icon-above-font.svg"
+        src="../assets/images/icon-above-font.png"
         alt="Logo de Groupomania"
       />
     </figure>
+    
     <form @submit.prevent="submitData" class="form">
       <label for="email">E-mail :</label>
       <input type="text" id="email" required v-model="userInfo.email" />
@@ -48,6 +49,8 @@ export default {
     },
   },
 };
+
+
 </script>
 <style scoped>
 .login {

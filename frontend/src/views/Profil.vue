@@ -13,7 +13,7 @@
         id="avatar"
         enctype="multipart/form-data"
       >
-        <input id="avatarUrl" type="file" />
+        <input id="avatarUrl" name="image" type="file" />
       </form>
       <button v-show="editAvatar" type="submit" form="avatar">
         Enregistrer
@@ -94,7 +94,7 @@ export default {
 
     async submitAvatar() {
       try {
-        const file = document.getElementById("avatarUrl").files;
+        const file = document.getElementById("avatarUrl").files[0];
         const data = {
           file: file,
           oldAvatar: this.user.avatar,

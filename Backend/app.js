@@ -1,5 +1,4 @@
 const express = require("express");
-const mysql = require("mysql");
 const connection = require("./db");
 const publicationsRoutes = require("./routes/publications");
 const commentsRoutes = require("./routes/comments");
