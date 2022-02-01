@@ -33,12 +33,13 @@ export default {
   },
 
   editAvatar(data, id) {
-    // const form = new FormData();
-    // form.append("file", data.avatar);
-    return axiosClient.post("/api/auth/profile/" + id + "/avatar", {
-      data: {
-        oldAvatar: data.oldAvatar,
-        avatar_edited: data.avatar_edited,
+    const form = new FormData();
+    form.append("file", data.file);
+    form.append("oldAvatar", data.oldAvatar);
+    form.append("avatar_edited", data.avatar_edited);
+    return axiosClient.post("/api/auth/profile/" + id + "/avatar", form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
     });
   },

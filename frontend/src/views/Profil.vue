@@ -7,7 +7,12 @@
       <button v-show="avatarEditMode" @click="toggleEditAvatar">
         Changer d'avatar
       </button>
-      <form v-show="editAvatar" @submit.prevent="submitAvatar" id="avatar">
+      <form
+        v-show="editAvatar"
+        @submit.prevent="submitAvatar"
+        id="avatar"
+        enctype="multipart/form-data"
+      >
         <input id="avatarUrl" type="file" />
       </form>
       <button v-show="editAvatar" type="submit" form="avatar">
@@ -89,13 +94,13 @@ export default {
 
     async submitAvatar() {
       try {
-        const url = document.getElementById("avatarUrl").value;
+        const file = document.getElementById("avatarUrl").files;
         const data = {
-          avatar: url,
+          file: file,
           oldAvatar: this.user.avatar,
           avatar_edited: this.user.avatar_edited,
         };
-        console.log(data);
+
         await this.$store.dispatch("editAvatar", {
           data: data,
           id: this.id_user,
