@@ -1,10 +1,7 @@
 <template>
   <div class="login">
     <figure class="logo">
-      <img
-        src="../assets/images/icon-above-font.svg"
-        alt="Logo de Groupomania"
-      />
+      <img src="assets/icon-above-font.svg" alt="Logo de Groupomania" />
     </figure>
     <form @submit.prevent="submitData" class="form">
       <label for="pseudo">Nom d'utilisateur</label>
@@ -19,7 +16,7 @@
         minlength="8"
         v-model="userInfo.password"
       />
-      <button type="submit" class="button">Créer un compte</button>
+      <button type="submit" class="button_blue">Créer un compte</button>
     </form>
     <p>Déjà inscrit ?</p>
     <router-link :to="{ name: 'Login' }">Se connecter</router-link>
@@ -69,10 +66,8 @@ export default {
   flex-direction: column;
 }
 
-.form input {
-  margin: 10px 0px;
-}
-.button {
-  margin: 20px 0px;
+a {
+  color: #134b98;
+  font-weight: bold;
 }
 </style>

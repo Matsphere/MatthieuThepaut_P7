@@ -15,10 +15,11 @@
         <p>{{ this.publication.pseudo }}</p>
         ,</router-link
       >
-      <a @click.prevent="toggleEditPublication" href="#" v-if="myPublication"
+      <p>{{this.publication.date_created}}</p>
+      <a @click.prevent="toggleEditPublication" href="#" v-if="myPublication && isActive"
         ><i class="fas fa-edit"></i
       ></a>
-      <a @click.prevent="deletePublication" href="#" v-if="myPublication"
+      <a @click.prevent="deletePublication" href="#" v-if="myPublication || isAdmin"
         ><i class="fas fa-trash-alt"></i
       ></a>
     </div>
@@ -39,15 +40,20 @@
     </form>
     <div class="underline"></div>
     <div class="reaction">
-      <a v-show="!isLiked" href="#" @click.prevent="sendLike">
-        <i class="far fa-thumbs-up thumbUp"></i>
+      <a v-show="!isLiked" href="#" @click.prevent="sendLike" class="thumbUp">
+        <i class="far fa-thumbs-up"></i>
       </a>
       <a v-show="isLiked" href="#" @click.prevent="cancelLike">
         <i class="fas fa-thumbs-up"></i>
       </a>
       <span>{{ this.likes }}</span>
-      <a v-show="!isDisliked" href="#" @click.prevent="sendDislike">
-        <i class="far fa-thumbs-down thumbDown"></i>
+      <a
+        v-show="!isDisliked"
+        href="#"
+        @click.prevent="sendDislike"
+        class="thumbDown"
+      >
+        <i class="far fa-thumbs-down"></i>
       </a>
       <a v-show="isDisliked" href="#" @click.prevent="cancelDislike">
         <i class="fas fa-thumbs-down"></i>
@@ -58,7 +64,7 @@
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
-      <form @submit.prevent="createComment">
+      <form @submit.prevent="createComment" v-if="isActive">
         <textarea name="comment" id="comment" v-model="comment"></textarea>
         <button type="submit">Publier le commentaire</button>
       </form>
@@ -225,6 +231,12 @@ export default {
     },
   },
   computed: {
+    isActive() {
+      return this.$store.state.user.is_active
+    },
+    isAdmin() {
+     return this.$store.state.user.is_admin
+    },
     myPublication() {
       if (this.publication.author_id == this.$store.state.user.id_user) {
         return true;

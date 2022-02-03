@@ -51,6 +51,7 @@ User.getUser = (id, callback) => {
       if (err) {
         callback(err, null);
       } else {
+        result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
         callback(null, result[0]);
       }
     }
@@ -84,6 +85,20 @@ User.editAvatar = (user, callback) => {
       callback(null, user.avatar);
     }
   });
+};
+
+User.toggleActivateUser = (data, callback) => {
+  connection.query(
+    `UPDATE users SET is_active = ? WHERE id_user = ?`,
+    [data.status, data.id],
+    (err) => {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null);
+      }
+    }
+  );
 };
 
 module.exports = User;

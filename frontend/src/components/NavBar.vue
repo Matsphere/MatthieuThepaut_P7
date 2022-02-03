@@ -1,23 +1,19 @@
 <template>
   <div class="nav">
     <figure>
-      <router-link to="/">
-        <img
-          src="../assets/images/icon-left-font.png"
-          alt="Logo Groupomania"
-          class="logo"
-        />
+      <router-link :to="{ name: 'Acceuil' }">
+        <img src="assets/images/logo.png" alt="Logo Groupomania" class="logo" />
       </router-link>
     </figure>
     <router-link :to="{ name: 'Acceuil' }">Acceuil</router-link>
-    <router-link :to="{ name: 'Profil', params: { id_user: id_user } }"
+    <router-link :to="{ name: 'Profil', params: { id_user: userId } }"
       >Profil</router-link
     >
     <router-link @click="logout" :to="{ name: 'Login' }"
       >Déconnexion</router-link
     >
     <div class="nav_user">
-      <router-link :to="{ name: 'Profil', params: { id_user: id_user } }">
+      <router-link :to="{ name: 'Profil', params: { id_user: userId } }">
         <figure>
           <img :src="avatar" alt="Avatar de l'utilisateur" class="avatar" />
         </figure>
@@ -30,8 +26,9 @@
 <script>
 export default {
   name: "NavBar",
+
   props: {
-    id_user: Number,
+    userId: Number,
     pseudo: String,
     avatar: String,
   },

@@ -2,7 +2,7 @@
   <div>
     <NavBar
       v-if="user"
-      :id_user="user.id_user"
+      :userId="user.id_user"
       :avatar="user.avatar"
       :pseudo="user.pseudo"
       class="nav"
@@ -28,22 +28,60 @@ export default {
 </script>
 
 <style>
+:root {
+  --main-red-color: #fd2d01;
+  --main-blue-color: #134b98;
+  --main-lightblue-color: #81a7be;
+  --main-police: "Cursive", "Arial", "Impact";
+}
+
 body {
   margin: 0;
 }
 figure {
   margin: 0;
 }
+label {
+  font-family: var(--main-police);
+  color: var(--main-red-color);
+  text-align: center;
+  font-weight: bold;
+}
+
+input {
+  margin: 5px 0 25px 0;
+}
+
+p {
+  font-family: var(--main-police);
+}
+
+*:focus {
+  outline: 5px solid var(--main-lightblue-color);
+}
+
+.button_blue {
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  background-color: var(--main-blue-color);
+  border: var(--main-blue-color);
+  border-radius: 10px;
+  margin: 20px auto;
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+  transition: box-shadow;
+}
+.button_blue:hover {
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.801);
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
 }
 
 a {
   text-decoration: none;
+  font-family: var(--main-police);
 }
 
 .nav a.router-link-exact-active {

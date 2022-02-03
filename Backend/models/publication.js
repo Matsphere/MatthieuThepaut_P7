@@ -10,7 +10,7 @@ const Publication = function (publication) {
 
 Publication.getAllPublications = (callback) => {
   connection.query(
-    `SELECT pub.*, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
+    `SELECT pub.id_publication, pub.author_id, pub.text, pub.users_liked, pub.users_disliked, DATE_FORMAT(pub.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(pub.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
   LEFT JOIN users
   ON pub.author_id = users.id_user
   LEFT JOIN comments
@@ -145,9 +145,9 @@ Publication.feedback = (data, callback) => {
       [JSON.stringify(data.users_disliked), data.id_publication],
       (err) => {
         if (err) {
-          callback(err,null);
+          callback(err, null);
         } else {
-          callback(null,data);
+          callback(null, data);
         }
       }
     );

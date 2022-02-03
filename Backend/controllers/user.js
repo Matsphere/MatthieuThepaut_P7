@@ -145,3 +145,22 @@ exports.editAvatar = async (req, res) => {
     res.status(400).json({ error: err, message: "Un Problème est survenu!" });
   }
 };
+
+exports.toggleActiveUser = async (req, res) => {
+  try {
+    const data = {
+      id: req.params.id,
+      status: req.body.status,
+    };
+
+    await User.toggleActiveUser(data, (err) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+
+      return res.status(200).json({ message: "Succès" });
+    });
+  } catch (err) {
+    res.status(400).json({ error: err, message: "Un Problème est survenu!" });
+  }
+};

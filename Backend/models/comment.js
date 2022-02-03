@@ -9,7 +9,7 @@ const Comment = function (comment) {
 
 Comment.getAllComments = (id, callback) => {
   connection.query(
-    `SELECT com.*, users.pseudo, users.avatar FROM comments com 
+    `SELECT com.id_comment, com.author_id, com.pub_id, com.comment, DATE_FORMAT(com.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(com.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.pseudo, users.avatar FROM comments com 
    LEFT JOIN users 
    ON users.id_user = com.author_id
    WHERE pub_id = ?

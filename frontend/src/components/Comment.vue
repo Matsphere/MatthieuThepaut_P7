@@ -14,11 +14,12 @@
         </figure>
         <p>{{ this.comment.pseudo }}</p>
       </router-link>
+      <p>{{ this.comment.date_created }}</p>
       <div>
-        <a @click.prevent="toggleEditComment" href="#" v-if="myComment"
+        <a @click.prevent="toggleEditComment" href="#" v-if="myComment && isActive"
           ><i class="fas fa-edit"></i
         ></a>
-        <a @click.prevent="deleteComment" href="#" v-if="myComment"
+        <a @click.prevent="deleteComment" href="#" v-if="myComment || isAdmin"
           ><i class="fas fa-trash-alt"></i
         ></a>
       </div>
@@ -79,6 +80,12 @@ export default {
     },
   },
   computed: {
+     isActive() {
+     return this.$store.state.user.is_active
+    },
+    isAdmin() {
+     return this.$store.state.user.is_admin
+    },
     myComment() {
       if (this.comment.author_id == this.$store.state.user.id_user) {
         return true;

@@ -1,16 +1,17 @@
 <template>
   <div class="login">
-    <figure class="logo">
+    <figure>
       <img
-        src="../assets/images/icon-above-font.png"
+        src="assets/icon-above-font.png"
         alt="Logo de Groupomania"
+        class="logo"
       />
     </figure>
-    
+
     <form @submit.prevent="submitData" class="form">
-      <label for="email">E-mail :</label>
+      <label for="email">E-mail</label>
       <input type="text" id="email" required v-model="userInfo.email" />
-      <label for="password">Mot de passe :</label>
+      <label for="password">Mot de passe</label>
       <input
         type="password"
         id="password"
@@ -18,7 +19,7 @@
         minlength="8"
         v-model="userInfo.password"
       />
-      <button type="submit" class="button">Connexion</button>
+      <button type="submit" class="button_blue">Connexion</button>
     </form>
     <p>Pas encore membre ?</p>
     <router-link :to="{ name: 'Signup' }">Créer un compte!</router-link>
@@ -49,8 +50,6 @@ export default {
     },
   },
 };
-
-
 </script>
 <style scoped>
 .login {
@@ -66,11 +65,8 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
-.form input {
-  margin: 5px;
-}
-.button {
-  margin: 20px 0px;
+a {
+  color: #134b98;
+  font-weight: bold;
 }
 </style>

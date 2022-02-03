@@ -47,6 +47,7 @@ export default createStore({
         (pub) => pub.id_publication == data.pub_id
       );
       data.avatar = state.user.avatar;
+      data.pseudo = state.user.pseudo;
       state.publications[index].comments.push(data);
     },
     editComment(state, data) {
@@ -59,6 +60,9 @@ export default createStore({
 
       state.publications[indexPublication].comments[indexComment].comment =
         data.comment;
+      state.publications[indexPublication].comments[
+        indexComment
+      ].date_modified = data.date_modified;
     },
     deleteComment(state, data) {
       const indexPublication = state.publications.findIndex(
@@ -134,6 +138,17 @@ export default createStore({
       commit("setInfo", data);
     },
 
+    async toggleActivateUser({ status, id }) {
+      try {
+        const response = await apiHandler.toggleActivateUser(status, id);
+        if (response.statusText != "OK") {
+          throw response;
+        }
+      } catch (err) {
+        console.log(err.response);
+      }
+    },
+
     async getAllPublications({ commit }) {
       const response = await apiHandler.getAllPublications();
       if (response.statusText != "OK") {
@@ -147,7 +162,17 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-      console.log(response);
+      response.data.date_created =
+        Date.getHours() +
+        ":" +
+        Date.getMinutes() +
+        " " +
+        Date.getDate() +
+        "/" +
+        Date.getMonth() +
+        "/" +
+        Date.getYear();
+
       const data = response.data;
       commit("addPublication", data);
     },
@@ -198,13 +223,33 @@ export default createStore({
       commit("setComments", { comments: data, id_publication: id_publication });
     },
 
-    async createComment({ commit }, data) {
-      console.log(data);
-      const response = await apiHandler.createComment(data);
+    async createComment({ commit }, comment) {
+      const response = await apiHandler.createComment(comment);
       if (response.statusText != "Created") {
         throw response;
       }
+      response.data.date_created =
+        Date.getHours() +
+        ":" +
+        Date.getMinutes() +
+        " " +
+        Date.getDate() +
+        "/" +
+        Date.getMonth() +
+        "/" +
+        Date.getYear();
+      response.data.date_modified =
+        Date.getHours() +
+        ":" +
+        Date.getMinutes() +
+        " " +
+        Date.getDate() +
+        "/" +
+        Date.getMonth() +
+        "/" +
+        Date.getYear();
 
+      const data = response.data;
       commit("addComment", data);
     },
 
@@ -217,9 +262,19 @@ export default createStore({
         throw response;
       }
 
-      console.log(response);
+      const date_modified =
+        Date.getHours() +
+        ":" +
+        Date.getMinutes() +
+        " " +
+        Date.getDate() +
+        "/" +
+        Date.getMonth() +
+        "/" +
+        Date.getYear();
 
       commit("editComment", {
+        date_modified: date_modified,
         comment: comment,
         id_comment: id_comment,
         id_publication: id_publication,

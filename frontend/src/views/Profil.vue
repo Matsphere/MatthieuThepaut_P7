@@ -1,6 +1,11 @@
 <template>
   <div class="profile">
     <div>
+      <h1>Profil de {{this.user.pseudo}}</h1>
+      <button v-show="this.user.is_active" @click="deactivateUser">Désactiver l'utilisateur</button>
+      <button v-show="!this.user.is_active" @click="activateUser">Résactiver l'utilisateur</button>
+    </div>
+    <div>
       <figure v-show="!editAvatar">
         <img :src="user.avatar" alt="Photo de profil" class="avatar" />
       </figure>
@@ -20,11 +25,7 @@
       </button>
       <button @click="cancelEdit" v-show="editAvatar">Annuler</button>
     </div>
-    <div>
-      <h2>Pseudo :</h2>
-      <p v-show="!editInfo">
-        {{ this.user.pseudo }}
-      </p>
+    <div>  
       <h2>Bio :</h2>
       <p v-show="!editInfo">
         {{ this.user.bio }}
@@ -61,6 +62,17 @@ export default {
     };
   },
   methods: {
+    activateUser() {
+      if (!this.currentUser.is_admin) {return}
+      this.$store.dispatch("toggleActivateUser", {status : 1, id : this.user.id_user})
+     
+    },
+    deactivateUser() {
+      if (!this.currentUser.is_admin) {return}
+     this.$store.dispatch("toggleActivateUser", {status : 0, id : this.user.id_user})
+     
+    },
+
     toggleEditAvatar() {
       this.editAvatar = true;
     },
@@ -113,14 +125,34 @@ export default {
   },
   created: async function () {
     try {
-      if (!this.$store.state.isLogged) {
+      if (!this.$store.state.isLogged || !this.currentUser) {
         this.$router.push({ name: "Login" });
       }
 
       if (this.id_user == this.$store.state.user.id_user) {
         this.user = this.currentUser;
       } else {
-        console.log(this.id_user);
+        const response = await apiHandler.getUser(this.id_user);
+        if (response.statusText != "OK") {
+          throw response;
+        }
+        this.user = response.data;
+      }
+      this.pseudo = this.user.pseudo;
+      this.bio = this.user.bio;
+    } catch (err) {
+      console.log(err.response);
+    }
+  },
+  async updated() {
+    try {
+      if (!this.$store.state.isLogged || !this.currentUser) {
+        this.$router.push({ name: "Login" });
+      }
+
+      if (this.id_user == this.$store.state.user.id_user) {
+        this.user = this.currentUser;
+      } else {
         const response = await apiHandler.getUser(this.id_user);
         if (response.statusText != "OK") {
           throw response;

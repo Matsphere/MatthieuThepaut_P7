@@ -1,6 +1,9 @@
 <template>
   <div class="home">
-    <router-link class="new_article" :to="{ name: 'CreatePublication' }"
+    <router-link
+      class="new_article button_blue"
+      :to="{ name: 'CreatePublication' }"
+      v-if="user.is_active"
       >Nouvel article</router-link
     >
 

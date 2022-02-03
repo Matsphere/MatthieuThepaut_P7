@@ -18,5 +18,6 @@ router.post("/login", limiter, userCtrl.login);
 router.get("/profile/:id", auth, userCtrl.getUser);
 router.post("/profile/:id/info", auth, userCtrl.editInfo);
 router.post("/profile/:id/avatar", auth, multer, userCtrl.editAvatar);
+router.post("/profile/:id/active", auth, userCtrl.toggleActiveUser);
 
 module.exports = router;
