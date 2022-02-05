@@ -23,6 +23,8 @@ exports.createPublication = async (req, res, next) => {
       text: req.body.text,
     });
 
+    console.log(publication);
+
     Publication.createPublication(publication, (err, data) => {
       if (err) {
         return res.status(500).json(err);

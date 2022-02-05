@@ -158,23 +158,13 @@ export default createStore({
       commit("setPublications", data);
     },
     async createPublication({ commit }, publication) {
+      console.log(publication);
       const response = await apiHandler.createPublication(publication);
+      commit("addPublication", response.data);
+
       if (response.statusText != "OK") {
         throw response;
       }
-      response.data.date_created =
-        Date.getHours() +
-        ":" +
-        Date.getMinutes() +
-        " " +
-        Date.getDate() +
-        "/" +
-        Date.getMonth() +
-        "/" +
-        Date.getYear();
-
-      const data = response.data;
-      commit("addPublication", data);
     },
 
     async editPublication({ commit }, { id_publication, text }) {

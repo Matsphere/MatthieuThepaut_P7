@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <router-link
+      v-if="user && user.is_active"
       class="new_article button_blue"
       :to="{ name: 'CreatePublication' }"
-      v-if="user.is_active"
       >Nouvel article</router-link
     >
 
@@ -34,6 +34,7 @@ export default {
       return this.$store.state.user;
     },
   },
+
   created: async function () {
     try {
       if (!this.$store.state.isLogged) {
@@ -51,14 +52,16 @@ export default {
 </script>
 
 <style scoped>
-.new_article {
-  background-color: blue;
-  padding: 20px;
-  border-radius: 10%;
-  color: white;
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  margin: auto;
 }
 
 .publication {
-  margin-top: 40px;
+  margin: 30px 0;
+  width: 100%;
 }
 </style>

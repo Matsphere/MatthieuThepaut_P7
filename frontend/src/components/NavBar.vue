@@ -1,8 +1,12 @@
 <template>
   <div class="nav">
-    <figure>
+    <figure class="logo">
       <router-link :to="{ name: 'Acceuil' }">
-        <img src="assets/images/logo.png" alt="Logo Groupomania" class="logo" />
+        <img
+          src="assets/icon-left-font.png"
+          alt="Logo Groupomania"
+          class="logo"
+        />
       </router-link>
     </figure>
     <router-link :to="{ name: 'Acceuil' }">Acceuil</router-link>
@@ -12,14 +16,16 @@
     <router-link @click="logout" :to="{ name: 'Login' }"
       >Déconnexion</router-link
     >
-    <div class="nav_user">
-      <router-link :to="{ name: 'Profil', params: { id_user: userId } }">
-        <figure>
-          <img :src="avatar" alt="Avatar de l'utilisateur" class="avatar" />
-        </figure>
-        <p>{{ this.pseudo }}</p>
-      </router-link>
-    </div>
+
+    <router-link
+      :to="{ name: 'Profil', params: { id_user: userId } }"
+      class="nav_user"
+    >
+      <figure>
+        <img :src="avatar" alt="Avatar de l'utilisateur" class="avatar" />
+      </figure>
+      <p>{{ this.pseudo }}</p>
+    </router-link>
   </div>
 </template>
 
@@ -47,13 +53,23 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 10px solid blue;
+  background-color: #134b98;
 }
 
+.nav_user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 150px;
+}
 a {
-  color: blue;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
 }
-
+p {
+  margin: 0;
+}
 .logo {
   height: 150px;
 }
@@ -61,5 +77,6 @@ a {
 .avatar {
   height: 100px;
   margin: 5px;
+  border-radius: 20px;
 }
 </style>
