@@ -1,46 +1,90 @@
 <template>
   <div class="profile">
-    <div>
-      <h1>Profil de {{this.user.pseudo}}</h1>
-      <button v-show="this.user.is_active" @click="deactivateUser">Désactiver l'utilisateur</button>
-      <button v-show="!this.user.is_active" @click="activateUser">Résactiver l'utilisateur</button>
+    <div class="menu">
+      <button
+        v-show="this.user.is_active && !editInfo && !editAvatar"
+        @click="deactivateUser"
+        class="button_red"
+      >
+        Désactiver l'utilisateur
+      </button>
+      <button
+        v-show="!this.user.is_active && !editInfo && !editAvatar"
+        @click="activateUser"
+        class="button_blue"
+      >
+        Résactiver l'utilisateur
+      </button>
+      <button
+        v-show="
+          avatarEditMode && this.user.is_active && !editInfo && !editAvatar
+        "
+        @click="toggleEditAvatar"
+        class="button_blue"
+      >
+        Changer d'avatar
+      </button>
+      <button
+        v-show="infoEditMode && this.user.is_active && !editInfo && !editAvatar"
+        @click="toggleEditInfo"
+        class="button_blue"
+      >
+        Modifier mon profil
+      </button>
     </div>
-    <div>
+    <div id="avatar">
+      <h1>Profil de {{ this.user.pseudo }}</h1>
       <figure v-show="!editAvatar">
         <img :src="user.avatar" alt="Photo de profil" class="avatar" />
       </figure>
-      <button v-show="avatarEditMode" @click="toggleEditAvatar">
-        Changer d'avatar
-      </button>
+
       <form
         v-show="editAvatar"
         @submit.prevent="submitAvatar"
         id="avatar"
         enctype="multipart/form-data"
       >
-        <input id="avatarUrl" name="image" type="file" />
+        <input
+          id="avatarUrl"
+          name="image"
+          type="file"
+          accept=".jpeg, .jpg, .png"
+        />
       </form>
-      <button v-show="editAvatar" type="submit" form="avatar">
-        Enregistrer
-      </button>
-      <button @click="cancelEdit" v-show="editAvatar">Annuler</button>
+      <div>
+        <button @click="cancelEdit" v-show="editAvatar" class="button_red">
+          Annuler
+        </button>
+        <button
+          v-show="editAvatar"
+          type="submit"
+          form="avatar"
+          class="button_blue"
+        >
+          Enregistrer
+        </button>
+      </div>
     </div>
-    <div>  
-      <h2>Bio :</h2>
+    <div id="info">
+      <h2 v-show="!editInfo">Bio :</h2>
       <p v-show="!editInfo">
         {{ this.user.bio }}
       </p>
-      <button v-show="infoEditMode" @click="toggleEditInfo">
-        Modifier mon profil
-      </button>
+
       <form v-show="editInfo" @submit.prevent="submitInfo" id="info">
         <label for="pseudo">Pseudo :</label>
         <input id="pseudo" type="text" v-model="pseudo" />
         <label for="bio">Bio :</label>
         <textarea id="bio" name="text" v-model="bio"></textarea>
       </form>
-      <button v-show="editInfo" type="submit" form="info">Enregistrer</button>
-      <button @click="cancelEdit" v-show="editInfo">Annuler</button>
+      <div>
+        <button @click="cancelEdit" v-show="editInfo" class="button_red">
+          Annuler
+        </button>
+        <button v-show="editInfo" type="submit" form="info" class="button_blue">
+          Enregistrer
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -63,14 +107,22 @@ export default {
   },
   methods: {
     activateUser() {
-      if (!this.currentUser.is_admin) {return}
-      this.$store.dispatch("toggleActivateUser", {status : 1, id : this.user.id_user})
-     
+      if (!this.currentUser.is_admin) {
+        return;
+      }
+      this.$store.dispatch("toggleActivateUser", {
+        status: 1,
+        id: this.user.id_user,
+      });
     },
     deactivateUser() {
-      if (!this.currentUser.is_admin) {return}
-     this.$store.dispatch("toggleActivateUser", {status : 0, id : this.user.id_user})
-     
+      if (!this.currentUser.is_admin) {
+        return;
+      }
+      this.$store.dispatch("toggleActivateUser", {
+        status: 0,
+        id: this.user.id_user,
+      });
     },
 
     toggleEditAvatar() {
@@ -125,7 +177,7 @@ export default {
   },
   created: async function () {
     try {
-      if (!this.$store.state.isLogged || !this.currentUser) {
+      if (!this.$store.state.isLogged || !this.$store.state.user) {
         this.$router.push({ name: "Login" });
       }
 
@@ -189,4 +241,43 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile {
+  width: 80%;
+  margin: auto;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  height: 300px;
+  border-radius: 40px;
+}
+
+#info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#bio {
+  width: 50%;
+  height: 300px;
+  resize: none;
+}
+
+label {
+  color: #134b98;
+  font-size: 24px;
+}
+</style>

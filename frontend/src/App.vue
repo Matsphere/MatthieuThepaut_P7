@@ -51,6 +51,15 @@ label {
 input {
   margin: 5px 0 25px 0;
 }
+h1 {
+  font-family: var(--main-police);
+  color: var(--main-red-color);
+}
+
+h2 {
+  font-family: var(--main-police);
+  color: var(--main-blue-color);
+}
 
 p {
   font-family: var(--main-police);
@@ -67,11 +76,26 @@ p {
   background-color: var(--main-blue-color);
   border: var(--main-blue-color);
   border-radius: 10px;
-  margin: 20px auto;
+  margin: 20px;
   box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
   transition: box-shadow;
 }
 .button_blue:hover {
+  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.801);
+}
+
+.button_red {
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+  background-color: red;
+  border: var(--main-blue-color);
+  border-radius: 10px;
+  margin: 20px;
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+  transition: box-shadow;
+}
+.button_red:hover {
   box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.801);
 }
 #app {
