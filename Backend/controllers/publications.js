@@ -40,6 +40,7 @@ exports.createPublication = async (req, res, next) => {
 exports.modifyPublication = async (req, res, next) => {
   try {
     const publication = new Publication({
+      title : req.body.title,
       text: req.body.text,
       id_publication: req.params.id,
     });

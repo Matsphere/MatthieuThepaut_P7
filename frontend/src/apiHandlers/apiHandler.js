@@ -63,10 +63,8 @@ export default {
     return axiosClient.post("/api/publications/", data);
   },
 
-  editPublication(id_publication, text) {
-    console.log(typeof text);
-    const url = "/api/publications/" + id_publication;
-    return axiosClient.put(url, { text: text });
+  editPublication(id_publication, title, text) {
+    return axiosClient.put("/api/publications/" + id_publication, { title : title, text: text });
   },
 
   deletePublication(id) {

@@ -72,7 +72,12 @@ p {
 *:focus {
   outline: 5px solid var(--main-lightblue-color);
 }
-
+.blue {
+  color: var(--main-blue-color);
+}
+.red {
+  color: red;
+}
 .button_blue {
   color: white;
   padding: 10px;

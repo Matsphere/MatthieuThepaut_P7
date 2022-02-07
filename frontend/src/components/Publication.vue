@@ -1,6 +1,6 @@
 <template>
   <div class="publication">
-    <div>
+    <div class="menu">
       <router-link
         class="author"
         :to="{ name: 'Profil', params: { id_user: publication.author_id } }"
@@ -13,62 +13,87 @@
           />
         </figure>
         <p>{{ this.publication.pseudo }}</p>
-        ,</router-link
-      >
+      </router-link>
       <p>{{ this.publication.date_created }}</p>
-      <a
-        @click.prevent="toggleEditPublication"
-        href="#"
-        v-if="myPublication && isActive"
-        ><i class="fas fa-edit"></i
-      ></a>
-      <a
-        @click.prevent="deletePublication"
-        href="#"
-        v-if="myPublication || isAdmin"
-        ><i class="fas fa-trash-alt"></i
-      ></a>
+      <div>
+        <a
+          class="blue"
+          @click.prevent="toggleEditPublication"
+          href="#"
+          v-if="myPublication && isActive"
+          ><i class="fas fa-edit"></i
+        ></a>
+        <a
+          class="red"
+          @click.prevent="deletePublication"
+          href="#"
+          v-if="myPublication || isAdmin"
+          ><i class="fas fa-trash-alt red"></i
+        ></a>
+      </div>
     </div>
     <div class="underline"></div>
     <h2 v-show="!editPublicationMode">{{ this.publication.title }}</h2>
     <p v-show="!editPublicationMode">
       {{ this.publication.text }}
     </p>
-    <form v-show="editPublicationMode" @submit.prevent="editPublication">
+    <form
+      v-show="editPublicationMode"
+      @submit.prevent="editPublication"
+      id="article"
+    >
       <input type="text" id="title" v-model="title" />
       <textarea name="text" id="text" v-model="text"></textarea>
-      <button type="submit">Enregistrer</button>
-      <button @click="cancelEdit">Annuler</button>
+      <div>
+        <button @click="cancelEdit" class="button_red">Annuler</button>
+        <button type="submit" class="button_blue">Enregistrer</button>
+      </div>
     </form>
     <div class="underline"></div>
     <div class="reaction">
-      <a v-show="!isLiked" href="#" @click.prevent="sendLike" class="thumbUp">
-        <i class="far fa-thumbs-up"></i>
-      </a>
-      <a v-show="isLiked" href="#" @click.prevent="cancelLike">
-        <i class="fas fa-thumbs-up"></i>
-      </a>
-      <span>{{ this.likes }}</span>
-      <a
-        v-show="!isDisliked"
-        href="#"
-        @click.prevent="sendDislike"
-        class="thumbDown"
-      >
-        <i class="far fa-thumbs-down"></i>
-      </a>
-      <a v-show="isDisliked" href="#" @click.prevent="cancelDislike">
-        <i class="fas fa-thumbs-down"></i>
-      </a>
+      <div>
+        <a
+          v-show="!isLiked"
+          href="#"
+          @click.prevent="sendLike"
+          class="thumbUp blue"
+        >
+          <i class="far fa-thumbs-up"></i>
+        </a>
+        <a v-show="isLiked" href="#" @click.prevent="cancelLike" class="blue">
+          <i class="fas fa-thumbs-up"></i>
+        </a>
+        <span>{{ this.likes }}</span>
+        <a
+          v-show="!isDisliked"
+          href="#"
+          @click.prevent="sendDislike"
+          class="thumbDown red"
+        >
+          <i class="far fa-thumbs-down"></i>
+        </a>
+        <a
+          v-show="isDisliked"
+          href="#"
+          @click.prevent="cancelDislike"
+          class="red"
+        >
+          <i class="fas fa-thumbs-down"></i>
+        </a>
 
-      <span>{{ this.dislikes }}</span>
-      <button @click="displayComments">Commenter</button>
+        <span>{{ this.dislikes }}</span>
+      </div>
+
+      <button @click="displayComments" class="button_blue">Commentaires</button>
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
-      <form @submit.prevent="createComment" v-if="isActive">
+      <form @submit.prevent="createComment" v-if="isActive" id="new_comment">
         <textarea name="comment" id="comment" v-model="comment"></textarea>
-        <button type="submit">Publier le commentaire</button>
+
+        <button type="submit" class="button_blue">
+          Publier le commentaire
+        </button>
       </form>
       <Comment
         v-for="comment in publication.comments"
@@ -282,22 +307,44 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .publication {
-  margin: auto;
+  margin: 30px auto;
+  padding: 20px;
   width: 60%;
-  border: 1px solid;
+  border: 1px solid #81a7be;
+  border-radius: 20px;
+  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .author {
   display: flex;
   align-items: center;
+  color: #134b98;
+  font-weight: bold;
 }
+
 .avatar {
   margin: 10px;
   height: 100px;
+  border-radius: 20px;
 }
 .underline {
-  border: 1px solid;
+  border: 1px solid #fd2d01;
   width: 80%;
-  margin: auto;
+  margin: 10px auto;
+}
+#article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#text {
+  width: 60%;
+  height: 300px;
 }
 .reaction {
   width: 50%;
@@ -306,8 +353,22 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
-.far {
-  margin: 5px;
+#new_comment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#comment {
+  width: 80%;
+  height: 100px;
+}
+.blue {
+  margin: 15px;
+  font-size: 20px;
+}
+.red {
+  margin: 15px;
+  font-size: 20px;
 }
 
 .disabled {

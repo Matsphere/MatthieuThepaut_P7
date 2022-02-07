@@ -82,6 +82,7 @@ export default createStore({
       const index = state.publications.findIndex(
         (pub) => pub.id_publication == data.id_publication
       );
+      state.publications[index].title = data.title;
       state.publications[index].text = data.text;
     },
     deletePublication(state, id_publication) {
@@ -159,7 +160,6 @@ export default createStore({
       commit("setPublications", data);
     },
     async createPublication({ commit }, publication) {
-    
       const response = await apiHandler.createPublication(publication);
       commit("addPublication", response.data);
 
@@ -168,13 +168,21 @@ export default createStore({
       }
     },
 
-    async editPublication({ commit }, { id_publication, text }) {
-      const response = await apiHandler.editPublication(id_publication, text);
+    async editPublication({ commit }, { id_publication, title, text }) {
+      const response = await apiHandler.editPublication(
+        id_publication,
+        title,
+        text
+      );
       if (response.statusText != "OK") {
         throw response;
       }
 
-      commit("editPublication", { id_publication: id_publication, text: text });
+      commit("editPublication", {
+        id_publication: id_publication,
+        title: title,
+        text: text,
+      });
     },
 
     async deletePublication({ commit }, id_publication) {

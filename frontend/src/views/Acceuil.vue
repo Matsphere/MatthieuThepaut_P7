@@ -7,7 +7,7 @@
       >Nouvel article</router-link
     >
 
-    <div v-if="publications" class="publication">
+    <div v-if="publications" class="publications">
       <Publication
         v-for="publication in publications"
         :key="publication.id_publication"
@@ -60,7 +60,7 @@ export default {
   margin: auto;
 }
 
-.publication {
+.publications {
   margin: 30px 0;
   width: 100%;
 }
