@@ -48,7 +48,7 @@ export default createStore({
       );
       data.avatar = state.user.avatar;
       data.pseudo = state.user.pseudo;
-      state.publications[index].comments.push(data);
+      state.publications[index].comments.splice(0, 0, data);
     },
     editComment(state, data) {
       const indexPublication = state.publications.findIndex(
@@ -238,10 +238,10 @@ export default createStore({
         date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
         " - " +
         date.toLocaleDateString();
-      response.data.date_created = date_created;
-      response.data.date_mofified = date_created;
 
       const data = response.data;
+      data.date_created = date_created;
+      data.date_modified = date_created;
       commit("addComment", data);
     },
 

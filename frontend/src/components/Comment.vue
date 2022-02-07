@@ -136,7 +136,11 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
-.fas {
+.red {
+  font-size: 25px;
+  margin: 10px;
+}
+.blue {
   font-size: 25px;
   margin: 10px;
 }
