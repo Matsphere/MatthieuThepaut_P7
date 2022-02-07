@@ -14,7 +14,7 @@
         </figure>
         <p>{{ this.publication.pseudo }}</p>
       </router-link>
-      <p>{{ this.publication.date_created }}</p>
+      <p>{{ this.date }}</p>
       <div>
         <a
           class="blue"
@@ -261,6 +261,11 @@ export default {
     },
   },
   computed: {
+    date() {
+      if (this.publication.date_created == this.publication.date_modified) {
+        return this.publication.date_created;
+      } else return "Modifiée à " + this.publication.date_modified;
+    },
     isActive() {
       return this.$store.state.user.is_active;
     },

@@ -84,6 +84,7 @@ export default createStore({
       );
       state.publications[index].title = data.title;
       state.publications[index].text = data.text;
+      state.publications[index].date_modified = data.date_modified;
     },
     deletePublication(state, id_publication) {
       const index = state.publications.findIndex(
@@ -177,11 +178,16 @@ export default createStore({
       if (response.statusText != "OK") {
         throw response;
       }
-
+      const date = new Date();
+      const date_modified =
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        " - " +
+        date.toLocaleDateString();
       commit("editPublication", {
         id_publication: id_publication,
         title: title,
         text: text,
+        date_modified: date_modified,
       });
     },
 
@@ -227,26 +233,13 @@ export default createStore({
       if (response.statusText != "Created") {
         throw response;
       }
-      response.data.date_created =
-        Date.getHours() +
-        ":" +
-        Date.getMinutes() +
-        " " +
-        Date.getDate() +
-        "/" +
-        Date.getMonth() +
-        "/" +
-        Date.getYear();
-      response.data.date_modified =
-        Date.getHours() +
-        ":" +
-        Date.getMinutes() +
-        " " +
-        Date.getDate() +
-        "/" +
-        Date.getMonth() +
-        "/" +
-        Date.getYear();
+      const date = new Date();
+      const date_created =
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        " - " +
+        date.toLocaleDateString();
+      response.data.date_created = date_created;
+      response.data.date_mofified = date_created;
 
       const data = response.data;
       commit("addComment", data);
@@ -261,16 +254,11 @@ export default createStore({
         throw response;
       }
 
+      const date = new Date();
       const date_modified =
-        Date.getHours() +
-        ":" +
-        Date.getMinutes() +
-        " " +
-        Date.getDate() +
-        "/" +
-        Date.getMonth() +
-        "/" +
-        Date.getYear();
+        date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        " - " +
+        date.toLocaleDateString();
 
       commit("editComment", {
         date_modified: date_modified,

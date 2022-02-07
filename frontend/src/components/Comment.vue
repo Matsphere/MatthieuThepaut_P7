@@ -14,21 +14,35 @@
         </figure>
         <p>{{ this.comment.pseudo }}</p>
       </router-link>
-      <p>{{ this.comment.date_created }}</p>
+      <p>{{ this.date }}</p>
       <div>
-        <a @click.prevent="toggleEditComment" href="#" v-if="myComment && isActive"
+        <a
+          @click.prevent="toggleEditComment"
+          href="#"
+          v-if="myComment && isActive"
+          class="blue"
           ><i class="fas fa-edit"></i
         ></a>
-        <a @click.prevent="deleteComment" href="#" v-if="myComment || isAdmin"
+        <a
+          @click.prevent="deleteComment"
+          href="#"
+          v-if="myComment || isAdmin"
+          class="red"
           ><i class="fas fa-trash-alt"></i
         ></a>
       </div>
     </div>
     <p v-show="!editCommentMode">{{ this.comment.comment }}</p>
-    <form v-show="editCommentMode" @submit.prevent="editComment">
+    <form
+      v-show="editCommentMode"
+      @submit.prevent="editComment"
+      id="form_comment"
+    >
       <textarea name="comment" id="text" v-model="text"></textarea>
-      <button type="submit">Enregistrer</button>
-      <button @click="cancelEdit">Annuler</button>
+      <div>
+        <button @click="cancelEdit" class="button_red">Annuler</button>
+        <button type="submit" class="button_blue">Enregistrer</button>
+      </div>
     </form>
   </div>
 </template>
@@ -80,11 +94,16 @@ export default {
     },
   },
   computed: {
-     isActive() {
-     return this.$store.state.user.is_active
+    date() {
+      if (this.comment.date_created == this.comment.date_modified) {
+        return this.comment.date_created;
+      } else return "Modifié à " + this.comment.date_modified;
+    },
+    isActive() {
+      return this.$store.state.user.is_active;
     },
     isAdmin() {
-     return this.$store.state.user.is_admin
+      return this.$store.state.user.is_admin;
     },
     myComment() {
       if (this.comment.author_id == this.$store.state.user.id_user) {
@@ -100,8 +119,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .comment {
-  border: 5px solid red;
+  border: 2px solid;
   margin: 5px;
+  padding: 10px;
+  border-radius: 20px;
 }
 .menu {
   display: flex;
@@ -112,19 +133,26 @@ export default {
 .author {
   display: flex;
   align-items: center;
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: bold;
 }
 .fas {
   font-size: 25px;
   margin: 10px;
 }
-
+#form_comment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 #text {
-  height: 20px;
+  height: 150px;
+  width: 100%;
 }
 
 #avatar {
-  height: 100px;
+  height: 50px;
   margin: 5px 20px 5px 5px;
+  border-radius: 20px;
 }
 </style>
