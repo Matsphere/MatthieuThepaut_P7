@@ -65,7 +65,7 @@
         </button>
       </div>
     </div>
-    <div id="info">
+    <div id="user_info">
       <h2 v-show="!editInfo">Bio :</h2>
       <p v-show="!editInfo">
         {{ this.user.bio }}
@@ -73,9 +73,9 @@
 
       <form v-show="editInfo" @submit.prevent="submitInfo" id="info">
         <label for="pseudo">Pseudo :</label>
-        <input id="pseudo" type="text" v-model="pseudo" />
+        <input id="pseudo" type="text" :value="user.pseudo" />
         <label for="bio">Bio :</label>
-        <textarea id="bio" name="text" v-model="bio"></textarea>
+        <textarea id="bio" name="text" :value="user.bio"></textarea>
       </form>
       <div>
         <button @click="cancelEdit" v-show="editInfo" class="button_red">
@@ -101,8 +101,6 @@ export default {
       myProfile: false,
       editAvatar: false,
       editInfo: false,
-      pseudo: "",
-      bio: "",
     };
   },
   methods: {
@@ -136,15 +134,15 @@ export default {
     cancelEdit() {
       this.editAvatar = false;
       this.editInfo = false;
-      this.pseudo = this.user.pseudo;
-      this.bio = this.user.bio;
     },
 
     async submitInfo() {
       try {
+        const pseudo = document.getElementById("pseudo").value;
+        const bio = document.getElementById("bio").value;
         const data = {
-          pseudo: this.pseudo,
-          bio: this.bio,
+          pseudo: pseudo,
+          bio: bio,
         };
         await this.$store.dispatch("editInfo", {
           data: data,
@@ -190,15 +188,13 @@ export default {
         }
         this.user = response.data;
       }
-      this.pseudo = this.user.pseudo;
-      this.bio = this.user.bio;
     } catch (err) {
       console.log(err.response);
     }
   },
   async updated() {
     try {
-      if (!this.$store.state.isLogged || !this.currentUser) {
+      if (!this.$store.state.isLogged || !this.$store.state.user) {
         this.$router.push({ name: "Login" });
       }
 
@@ -211,8 +207,6 @@ export default {
         }
         this.user = response.data;
       }
-      this.pseudo = this.user.pseudo;
-      this.bio = this.user.bio;
     } catch (err) {
       console.log(err.response);
     }
@@ -263,6 +257,13 @@ export default {
   border-radius: 40px;
 }
 
+#user_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 #info {
   display: flex;
   flex-direction: column;
@@ -273,11 +274,5 @@ export default {
 #bio {
   width: 50%;
   height: 300px;
-  resize: none;
-}
-
-label {
-  color: #134b98;
-  font-size: 24px;
 }
 </style>

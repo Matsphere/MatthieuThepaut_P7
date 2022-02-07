@@ -49,7 +49,9 @@ export default {
   },
 
   toggleActivateUser(status, id) {
-    return axiosClient.post("/api/auth/profile/" + id + "/active", {status : status});
+    return axiosClient.post("/api/auth/profile/" + id + "/active", {
+      status: status,
+    });
   },
 
   getAllPublications() {
@@ -57,6 +59,7 @@ export default {
   },
 
   createPublication(data) {
+    console.log(data);
     return axiosClient.post("/api/publications/", data);
   },
 

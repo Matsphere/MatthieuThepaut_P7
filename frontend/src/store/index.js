@@ -138,12 +138,13 @@ export default createStore({
       commit("setInfo", data);
     },
 
-    async toggleActivateUser({ status, id }) {
+    async toggleActivateUser({ commit }, { status, id }) {
       try {
         const response = await apiHandler.toggleActivateUser(status, id);
         if (response.statusText != "OK") {
           throw response;
         }
+        commit();
       } catch (err) {
         console.log(err.response);
       }
@@ -158,7 +159,7 @@ export default createStore({
       commit("setPublications", data);
     },
     async createPublication({ commit }, publication) {
-      console.log(publication);
+    
       const response = await apiHandler.createPublication(publication);
       commit("addPublication", response.data);
 

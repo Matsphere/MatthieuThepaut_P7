@@ -15,26 +15,28 @@
         <p>{{ this.publication.pseudo }}</p>
         ,</router-link
       >
-      <p>{{this.publication.date_created}}</p>
-      <a @click.prevent="toggleEditPublication" href="#" v-if="myPublication && isActive"
+      <p>{{ this.publication.date_created }}</p>
+      <a
+        @click.prevent="toggleEditPublication"
+        href="#"
+        v-if="myPublication && isActive"
         ><i class="fas fa-edit"></i
       ></a>
-      <a @click.prevent="deletePublication" href="#" v-if="myPublication || isAdmin"
+      <a
+        @click.prevent="deletePublication"
+        href="#"
+        v-if="myPublication || isAdmin"
         ><i class="fas fa-trash-alt"></i
       ></a>
     </div>
     <div class="underline"></div>
-    <p class="text" v-show="!editPublicationMode">
+    <h2 v-show="!editPublicationMode">{{ this.publication.title }}</h2>
+    <p v-show="!editPublicationMode">
       {{ this.publication.text }}
     </p>
     <form v-show="editPublicationMode" @submit.prevent="editPublication">
-      <textarea
-        name="text"
-        id="text"
-        cols="30"
-        rows="10"
-        v-model="text"
-      ></textarea>
+      <input type="text" id="title" v-model="title" />
+      <textarea name="text" id="text" v-model="text"></textarea>
       <button type="submit">Enregistrer</button>
       <button @click="cancelEdit">Annuler</button>
     </form>
@@ -91,11 +93,13 @@ export default {
     return {
       editPublicationMode: false,
       commentOn: false,
+      title: "",
       text: "",
       comment: "",
     };
   },
   created() {
+    this.title = this.publication.title;
     this.text = this.publication.text;
   },
   mounted() {
@@ -150,6 +154,7 @@ export default {
       try {
         await this.$store.dispatch("editPublication", {
           id_publication: this.publication.id_publication,
+          title: this.title,
           text: this.text,
         });
         this.editPublicationMode = false;
@@ -232,10 +237,10 @@ export default {
   },
   computed: {
     isActive() {
-      return this.$store.state.user.is_active
+      return this.$store.state.user.is_active;
     },
     isAdmin() {
-     return this.$store.state.user.is_admin
+      return this.$store.state.user.is_admin;
     },
     myPublication() {
       if (this.publication.author_id == this.$store.state.user.id_user) {

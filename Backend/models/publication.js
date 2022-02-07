@@ -3,6 +3,7 @@ const connection = require("../db");
 const Publication = function (publication) {
   this.id_publication = publication.id_publication;
   this.author_id = publication.author_id;
+  this.title = publication.title;
   this.text = publication.text;
   this.users_liked = publication.users_liked || [];
   this.users_disliked = publication.users_disliked || [];
@@ -10,7 +11,7 @@ const Publication = function (publication) {
 
 Publication.getAllPublications = (callback) => {
   connection.query(
-    `SELECT pub.id_publication, pub.author_id, pub.text, pub.users_liked, pub.users_disliked, DATE_FORMAT(pub.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(pub.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
+    `SELECT pub.id_publication, pub.author_id, pub.title, pub.text, pub.users_liked, pub.users_disliked, DATE_FORMAT(pub.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(pub.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.avatar, users.pseudo, users.id_user, (SELECT COUNT(*) FROM comments) AS comments_number  FROM publications pub 
   LEFT JOIN users
   ON pub.author_id = users.id_user
   LEFT JOIN comments
@@ -35,9 +36,10 @@ Publication.getAllPublications = (callback) => {
 
 Publication.createPublication = (publication, callback) => {
   connection.query(
-    `INSERT INTO publications (author_id, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?, ?, ?, NOW(),NOW())`,
+    `INSERT INTO publications (author_id, title, text, users_liked, users_disliked, date_created, date_modified) VALUES (?, ?,?, ?, ?, NOW(),NOW())`,
     [
       publication.author_id,
+      publication.title,
       publication.text,
       JSON.stringify(publication.users_liked),
       JSON.stringify(publication.users_disliked),
@@ -56,8 +58,8 @@ Publication.createPublication = (publication, callback) => {
 
 Publication.modifyPublication = (publication, callback) => {
   connection.query(
-    `UPDATE publications SET text = ?, date_modified = NOW() WHERE id_publication = ?`,
-    [publication.text, publication.id_publication],
+    `UPDATE publications SET title = ?, text = ?, date_modified = NOW() WHERE id_publication = ?`,
+    [publication.title, publication.text, publication.id_publication],
     (err, result) => {
       if (err) {
         callback(err);

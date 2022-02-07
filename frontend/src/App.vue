@@ -43,9 +43,13 @@ figure {
 }
 label {
   font-family: var(--main-police);
-  color: var(--main-red-color);
+  color: var(--main-blue-color);
+  font-size: 24px;
   text-align: center;
   font-weight: bold;
+}
+textarea {
+  resize: none;
 }
 
 input {
