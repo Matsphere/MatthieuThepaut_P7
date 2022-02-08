@@ -2,14 +2,24 @@
   <div class="profile">
     <div class="menu">
       <button
-        v-show="this.user.is_active && !editInfo && !editAvatar"
+        v-show="
+          this.currentUser.is_admin &&
+          this.user.is_active &&
+          !editInfo &&
+          !editAvatar
+        "
         @click="deactivateUser"
         class="button_red"
       >
         Désactiver l'utilisateur
       </button>
       <button
-        v-show="!this.user.is_active && !editInfo && !editAvatar"
+        v-show="
+          this.currentUser.is_admin &&
+          !this.user.is_active &&
+          !editInfo &&
+          !editAvatar
+        "
         @click="activateUser"
         class="button_blue"
       >

@@ -11,7 +11,7 @@ const User = function (user) {
   this.pseudo = user.pseudo;
   this.bio = user.bio;
   this.is_admin = user.is_admin || 0;
-  this.is_active = user.is_active || 1;
+  this.is_active = user.is_active == 0 ? 0 : 1;
 };
 
 User.login = (email, callback) => {
@@ -87,7 +87,7 @@ User.editAvatar = (user, callback) => {
   });
 };
 
-User.toggleActivateUser = (data, callback) => {
+User.toggleActiveUser = (data, callback) => {
   connection.query(
     `UPDATE users SET is_active = ? WHERE id_user = ?`,
     [data.status, data.id],
