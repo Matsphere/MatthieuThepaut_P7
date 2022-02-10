@@ -22,7 +22,7 @@ User.login = (email, callback) => {
       if (err) {
         callback(err, null);
       } else {
-        result[0].avatar = process.env.URL + process.env.DIR + result[0].avatar;
+        
         callback(null, result[0]);
       }
     }

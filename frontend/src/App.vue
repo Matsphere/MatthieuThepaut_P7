@@ -124,4 +124,9 @@ a {
 .nav {
   margin-bottom: 40px;
 }
+
+.error {
+  color: red;
+  font-weight: bold;
+}
 </style>

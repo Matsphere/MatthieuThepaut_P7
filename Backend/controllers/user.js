@@ -71,6 +71,7 @@ exports.login = async (req, res, next) => {
       }
 
       const user = new User(data);
+      user.avatar = process.env.URL + process.env.DIR + user.avatar;
 
       const token = jwt.sign({ userId: user.id_user }, "RANDOM_TOKEN_SECRET", {
         expiresIn: "24h",

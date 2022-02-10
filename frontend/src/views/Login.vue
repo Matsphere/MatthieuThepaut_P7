@@ -7,7 +7,7 @@
         class="logo"
       />
     </figure>
-
+    <p class="error">{{ this.errorMsg }}</p>
     <form @submit.prevent="submitData" class="form">
       <label for="email">E-mail</label>
       <input type="text" id="email" required v-model="userInfo.email" />
@@ -33,6 +33,7 @@ export default {
         email: "",
         password: "",
       },
+      errorMsg: "",
     };
   },
   methods: {
@@ -45,7 +46,17 @@ export default {
         await this.$store.dispatch("login", data);
         this.$router.push({ name: "Acceuil" });
       } catch (err) {
-        console.log(err);
+        if (err.response.status == 404) {
+          this.errorMsg = err.response.data.message;
+
+          return;
+        }
+        if (err.response.status == 401) {
+          this.errorMsg = "Mot de Passe Incorrect";
+          return;
+        } else {
+          this.$router.push({ name: "Error", params: { error: err } });
+        }
       }
     },
   },

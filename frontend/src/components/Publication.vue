@@ -21,14 +21,16 @@
           @click.prevent="toggleEditPublication"
           href="#"
           v-if="myPublication && isActive"
-          ><i class="fas fa-edit"></i
+          aria-label="éditer"
+          ><i class="fas fa-edit" aria-hidden="true"></i
         ></a>
         <a
           class="red"
           @click.prevent="deletePublication"
           href="#"
           v-if="myPublication || isAdmin"
-          ><i class="fas fa-trash-alt red"></i
+          aria-label="supprimer"
+          ><i class="fas fa-trash-alt red" aria-hidden="true"></i
         ></a>
       </div>
     </div>
@@ -56,35 +58,48 @@
           v-show="!isLiked"
           href="#"
           @click.prevent="sendLike"
-          class="thumbUp blue"
+          class="blue"
+          :class="{ disabled: isDisliked }"
+          aria-label="J'aime"
         >
-          <i class="far fa-thumbs-up"></i>
+          <i class="far fa-thumbs-up" aria-hidden="true"></i>
         </a>
-        <a v-show="isLiked" href="#" @click.prevent="cancelLike" class="blue">
-          <i class="fas fa-thumbs-up"></i>
+        <a
+          v-show="isLiked"
+          href="#"
+          @click.prevent="cancelLike"
+          class="blue"
+          aria-label="Je n'aime plus"
+        >
+          <i class="fas fa-thumbs-up" aria-hidden="true"></i>
         </a>
         <span>{{ this.likes }}</span>
         <a
           v-show="!isDisliked"
           href="#"
           @click.prevent="sendDislike"
-          class="thumbDown red"
+          class="red"
+          :class="{ disabled: isLiked }"
+          aria-label="Je n'aime pas"
         >
-          <i class="far fa-thumbs-down"></i>
+          <i class="far fa-thumbs-down" aria-hidden="true"></i>
         </a>
         <a
           v-show="isDisliked"
           href="#"
           @click.prevent="cancelDislike"
           class="red"
+          aria-label="Je ne déteste plus"
         >
-          <i class="fas fa-thumbs-down"></i>
+          <i class="fas fa-thumbs-down" aria-hidden="true"></i>
         </a>
 
         <span>{{ this.dislikes }}</span>
       </div>
 
-      <button @click="displayComments" class="button_blue">Commentaires</button>
+      <p>{{ this.publication.comments_number }} commentaires</p>
+
+      <button @click="displayComments" class="button_blue">Commenter</button>
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
@@ -127,19 +142,7 @@ export default {
     this.title = this.publication.title;
     this.text = this.publication.text;
   },
-  mounted() {
-    const thumbUp = document.querySelector(".thumbUp");
 
-    const thumbDown = document.querySelector(".thumbDown");
-
-    if (this.isLiked) {
-      thumbDown.classList.add("disabled");
-    }
-
-    if (this.isDisliked) {
-      thumbUp.classList.add("disabled");
-    }
-  },
   methods: {
     toggleEditPublication() {
       this.editPublicationMode = true;
@@ -147,6 +150,7 @@ export default {
 
     cancelEdit() {
       this.editPublicationMode = false;
+      this.title = this.publication.title;
       this.text = this.publication.text;
     },
 
@@ -164,6 +168,7 @@ export default {
 
     async createComment() {
       try {
+        if (!this.comment) return;
         await this.$store.dispatch("createComment", {
           comment: this.comment,
           author_id: this.$store.state.user.id_user,
@@ -177,6 +182,9 @@ export default {
 
     async editPublication() {
       try {
+        if (!this.title || !this.text) {
+          return;
+        }
         await this.$store.dispatch("editPublication", {
           id_publication: this.publication.id_publication,
           title: this.title,
@@ -208,8 +216,6 @@ export default {
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
-
-        document.querySelector(".thumbDown").classList.add("disabled");
       } catch (err) {
         console.log(err);
       }
@@ -224,7 +230,6 @@ export default {
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
-        document.querySelector(".thumbDown").classList.remove("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -239,7 +244,6 @@ export default {
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
-        document.querySelector(".thumbUp").classList.add("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -254,7 +258,6 @@ export default {
           users_liked: this.publication.users_liked,
           users_disliked: this.publication.users_disliked,
         });
-        document.querySelector(".thumbUp").classList.remove("disabled");
       } catch (err) {
         console.log(err.response);
       }
@@ -352,7 +355,7 @@ export default {
   height: 300px;
 }
 .reaction {
-  width: 50%;
+  width: 80%;
   margin: 10px auto;
   display: flex;
   align-items: center;

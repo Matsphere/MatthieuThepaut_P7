@@ -49,6 +49,7 @@ export default createStore({
       data.avatar = state.user.avatar;
       data.pseudo = state.user.pseudo;
       state.publications[index].comments.splice(0, 0, data);
+      state.publications[index].comments_number++;
     },
     editComment(state, data) {
       const indexPublication = state.publications.findIndex(
@@ -74,6 +75,7 @@ export default createStore({
       ].comments.findIndex((com) => com.id_comment == data.id_comment);
 
       state.publications[indexPublication].comments.splice(indexComment, 1);
+      state.publications[indexPublication].comments_number--;
     },
     addPublication(state, data) {
       state.publications.splice(0, 0, data);

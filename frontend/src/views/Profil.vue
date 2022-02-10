@@ -42,7 +42,7 @@
         Modifier mon profil
       </button>
     </div>
-    <div id="avatar">
+    <div id="avatar_picture">
       <h1>Profil de {{ this.user.pseudo }}</h1>
       <figure v-show="!editAvatar">
         <img :src="user.avatar" alt="Photo de profil" class="avatar" />
@@ -80,7 +80,7 @@
       <p v-show="!editInfo">
         {{ this.user.bio }}
       </p>
-
+      <p class="error">{{ this.errorMsg }}</p>
       <form v-show="editInfo" @submit.prevent="submitInfo" id="info">
         <label for="pseudo">Pseudo :</label>
         <input id="pseudo" type="text" :value="user.pseudo" />
@@ -111,6 +111,7 @@ export default {
       myProfile: false,
       editAvatar: false,
       editInfo: false,
+      errorMsg: "",
     };
   },
   methods: {
@@ -150,17 +151,25 @@ export default {
       try {
         const pseudo = document.getElementById("pseudo").value;
         const bio = document.getElementById("bio").value;
+
         const data = {
           pseudo: pseudo,
           bio: bio,
         };
+
+        if (!pseudo) return;
         await this.$store.dispatch("editInfo", {
           data: data,
           id: this.id_user,
         });
         this.editInfo = false;
       } catch (err) {
-        console.log(err.response);
+        if (err.response.status == 500 && err.response.data.errno == 1062) {
+          const field = err.response.data.sqlMessage.split("'")[3];
+          this.errorMsg = field + " déjà utilisé";
+        } else {
+          this.$router.push({ name: "Error", params: { error: err } });
+        }
       }
     },
 
@@ -172,7 +181,7 @@ export default {
           oldAvatar: this.user.avatar,
           avatar_edited: this.user.avatar_edited,
         };
-
+        if (!file) return;
         await this.$store.dispatch("editAvatar", {
           data: data,
           id: this.id_user,
@@ -256,7 +265,7 @@ export default {
   align-items: center;
   justify-content: space-between;
 }
-#avatar {
+#avatar_picture {
   display: flex;
   flex-direction: column;
   align-items: center;

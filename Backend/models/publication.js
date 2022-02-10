@@ -11,11 +11,11 @@ const Publication = function (publication) {
 
 Publication.getAllPublications = (callback) => {
   connection.query(
-    `SELECT pub.id_publication, pub.author_id, pub.title, pub.text, pub.users_liked, pub.users_disliked, DATE_FORMAT(pub.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(pub.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.avatar, users.pseudo, users.id_user FROM publications pub 
+    `SELECT pub.id_publication, pub.author_id, pub.title, pub.text, pub.users_liked, pub.users_disliked, DATE_FORMAT(pub.date_created, '%H:%i - %d/%m/%Y') AS date_created, DATE_FORMAT(pub.date_modified, '%H:%i - %d/%m/%Y') AS date_modified, users.avatar, users.pseudo, users.id_user, COUNT(c.id_comment) AS comments_number FROM publications pub 
   LEFT JOIN users
   ON pub.author_id = users.id_user
-  LEFT JOIN comments
-  ON comments.pub_id = pub.id_publication
+  LEFT JOIN comments c
+  ON c.pub_id = pub.id_publication
   GROUP BY pub.id_publication
   ORDER BY pub.date_created DESC`,
     (err, results) => {

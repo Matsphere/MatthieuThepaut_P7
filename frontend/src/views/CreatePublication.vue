@@ -3,7 +3,7 @@
     <h1>Nouvelle publication</h1>
     <form @submit.prevent="submitData">
       <label for="title">Titre :</label>
-      <input id="title" name="title" v-model="title" />
+      <input id="title" name="title" v-model="title" required />
       <label for="text">Article :</label>
       <textarea id="text" name="text" v-model="text"></textarea>
       <button type="submit" class="button_blue">Publier</button>
@@ -21,6 +21,7 @@ export default {
   methods: {
     async submitData() {
       try {
+        if (!this.title || !this.text) return
         const data = {
           title : this.title,
           text: this.text,

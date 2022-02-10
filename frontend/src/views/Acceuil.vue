@@ -42,7 +42,6 @@ export default {
       }
       await this.$store.dispatch("getAllPublications");
     } catch (err) {
-      console.log(err);
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });
       }

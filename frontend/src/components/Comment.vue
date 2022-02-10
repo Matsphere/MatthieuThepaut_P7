@@ -71,6 +71,7 @@ export default {
 
     async editComment() {
       try {
+        if(!this.text) return
         await this.$store.dispatch("editComment", {
           comment: this.text,
           id_comment: this.comment.id_comment,

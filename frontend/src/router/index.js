@@ -4,6 +4,7 @@ import Acceuil from "../views/Acceuil.vue";
 import CreatePublication from "../views/CreatePublication";
 import Profil from "../views/Profil.vue";
 import Signup from "../views/Signup.vue";
+import ErrorMsg from "../views/ErrorMsg.vue";
 
 const routes = [
   {
@@ -33,10 +34,16 @@ const routes = [
     name: "Signup",
     component: Signup,
   },
+  {
+    path: "/error/:error",
+    name: "Error",
+    component: ErrorMsg,
+    props: true,
+  },
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(process.env.URL),
   routes,
 });
 
