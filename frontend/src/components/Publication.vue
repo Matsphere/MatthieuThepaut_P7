@@ -20,7 +20,7 @@
           class="blue"
           @click.prevent="toggleEditPublication"
           href="#"
-          v-if="myPublication && isActive"
+          v-if="myPublication"
           aria-label="éditer"
           ><i class="fas fa-edit" aria-hidden="true"></i
         ></a>
@@ -103,7 +103,7 @@
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
-      <form @submit.prevent="createComment" v-if="isActive" id="new_comment">
+      <form @submit.prevent="createComment" id="new_comment">
         <textarea name="comment" id="comment" v-model="comment"></textarea>
 
         <button type="submit" class="button_blue">
@@ -162,7 +162,7 @@ export default {
         );
         this.commentOn = true;
       } catch (err) {
-        console.log(err);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -176,7 +176,7 @@ export default {
         });
         this.comment = "";
       } catch (err) {
-        console.log(err);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -192,7 +192,7 @@ export default {
         });
         this.editPublicationMode = false;
       } catch (err) {
-        console.log(err);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -203,7 +203,7 @@ export default {
           this.publication.id_publication
         );
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -217,7 +217,7 @@ export default {
           users_disliked: this.publication.users_disliked,
         });
       } catch (err) {
-        console.log(err);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -231,7 +231,7 @@ export default {
           users_disliked: this.publication.users_disliked,
         });
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -245,7 +245,7 @@ export default {
           users_disliked: this.publication.users_disliked,
         });
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -259,7 +259,7 @@ export default {
           users_disliked: this.publication.users_disliked,
         });
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
   },

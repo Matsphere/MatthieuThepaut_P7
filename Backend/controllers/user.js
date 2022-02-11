@@ -27,9 +27,26 @@ schema
 exports.signup = async (req, res, next) => {
   try {
     if (!schema.validate(req.body.password))
-      throw new Error(
-        "Le mot de passe doit contenir 8 caractères au minimum dont au moins une majuscule et un chiffre"
-      );
+      return res
+        .status(401)
+        .json(
+          "Le mot de passe doit contenir 8 caractères au minimum dont au moins une majuscule et un chiffre"
+        );
+
+    const emailPattern =
+      /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
+    if (!emailPattern.test(req.body.email)) {
+      return res.status(406).json("E-mail incorrect!");
+    }
+
+    const usernamePattern = /[A-Za-z0-9\-]{5,20}$/;
+    if (!usernamePattern.test(req.body.pseudo)) {
+      return res
+        .status(406)
+        .json(
+          "Le Pseudo ne peut contenir que des lettres, des chiffres et des traits d'union!"
+        );
+    }
 
     const hash = await bcrypt.hash(req.body.password, 10);
     const user = new User({
@@ -54,6 +71,11 @@ exports.signup = async (req, res, next) => {
 };
 exports.login = async (req, res, next) => {
   try {
+    const emailPattern =
+      /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
+    if (!emailPattern.test(req.body.email)) {
+      return res.status(406).json("E-mail incorrect!");
+    }
     User.login(req.body.email, async (err, data) => {
       if (err) {
         return res.status(500).json(err);

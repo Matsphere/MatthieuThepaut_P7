@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <router-link
-      v-if="user && user.is_active"
+      v-if="isLogged"
       class="new_article button_blue"
       :to="{ name: 'CreatePublication' }"
       >Nouvel article</router-link
@@ -33,14 +33,21 @@ export default {
     user() {
       return this.$store.state.user;
     },
+    isLogged() {
+      return this.$store.state.isLogged
+    }
   },
 
   created: async function () {
     try {
-      if (!this.$store.state.isLogged) {
+      if (!this.isLogged) {
         this.$router.push({ name: "Login" });
+      } else if (!this.user.is_active) {
+        this.$router.push({ name: "Error", params : {error : 'Votre compte a été désactivé veuillez contacter un administrateur!'} });
       }
+       else {
       await this.$store.dispatch("getAllPublications");
+      }
     } catch (err) {
       if (err.response.status == 401) {
         this.$router.push({ name: "Login" });

@@ -15,15 +15,15 @@ export default {
   data() {
     return {
       text: "",
-      title : ""
+      title: "",
     };
   },
   methods: {
     async submitData() {
       try {
-        if (!this.title || !this.text) return
+        if (!this.title || !this.text) return;
         const data = {
-          title : this.title,
+          title: this.title,
           text: this.text,
           author_id: this.user.id_user,
         };
@@ -31,18 +31,29 @@ export default {
         await this.$store.dispatch("createPublication", data);
         this.$router.push({ name: "Acceuil" });
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
   },
   created() {
-    if (!this.$store.state.isLogged) {
+    if (!this.isLogged) {
       this.$router.push({ name: "Login" });
+    } else if (!this.user.is_active) {
+      this.$router.push({
+        name: "Error",
+        params: {
+          error:
+            "Votre compte a été désactivé veuillez contacter un administrateur!",
+        },
+      });
     }
   },
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    isLogged() {
+      return this.$store.state.isLogged;
     },
   },
 };

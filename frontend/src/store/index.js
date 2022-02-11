@@ -142,18 +142,6 @@ export default createStore({
       commit("setInfo", data);
     },
 
-    async toggleActivateUser({ commit }, { status, id }) {
-      try {
-        const response = await apiHandler.toggleActivateUser(status, id);
-        if (response.statusText != "OK") {
-          throw response;
-        }
-        commit();
-      } catch (err) {
-        console.log(err.response);
-      }
-    },
-
     async getAllPublications({ commit }) {
       const response = await apiHandler.getAllPublications();
       if (response.statusText != "OK") {

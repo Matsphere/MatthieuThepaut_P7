@@ -50,10 +50,11 @@ export default {
           this.errorMsg = err.response.data.message;
 
           return;
-        }
-        if (err.response.status == 401) {
+        } else if (err.response.status == 401) {
           this.errorMsg = "Mot de Passe Incorrect";
           return;
+        } else if (err.response.status == 406) {
+          this.errorMsg = err.response.data.message;
         } else {
           this.$router.push({ name: "Error", params: { error: err } });
         }

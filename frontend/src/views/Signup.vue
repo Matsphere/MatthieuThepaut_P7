@@ -70,6 +70,8 @@ export default {
         if (!schema.validate(data.password)) {
           this.passwordError = true;
           return;
+        } else {
+          this.passwordError = false;
         }
         const emailPattern =
           /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
@@ -92,6 +94,10 @@ export default {
         if (err.response.status == 500 && err.response.data.errno == 1062) {
           const field = err.response.data.sqlMessage.split("'")[3];
           this.errorMsg = field + " déjà utilisé";
+        } else if (err.response.status == 406) {
+          this.errorMsg = err.response.data.message;
+        } else if (err.response.status == 401) {
+          this.passwordError = true;
         } else {
           this.$router.push({ name: "Error", params: { error: err } });
         }
@@ -114,10 +120,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 30%;
+  width: 40%;
 }
 input {
-  width: 30%;
+  width: 45%;
 }
 
 a {
@@ -129,4 +135,20 @@ a {
   text-align: center;
 }
 
+@media only screen and (max-width: 1200px) {
+  .form {
+    width: 55%;
+  }
+}
+@media only screen and (max-width: 900px) {
+  .form {
+    width: 65%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .form {
+    width: 100%;
+  }
+}
 </style>

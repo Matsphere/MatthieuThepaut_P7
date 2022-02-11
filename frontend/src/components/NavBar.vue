@@ -3,19 +3,37 @@
     <figure class="logo">
       <router-link :to="{ name: 'Acceuil' }">
         <img
-          src="assets/icon-left-font.png"
+          src="assets/icon-above-font.png"
           alt="Logo Groupomania"
           class="logo"
         />
       </router-link>
     </figure>
-    <router-link :to="{ name: 'Acceuil' }">Acceuil</router-link>
-    <router-link :to="{ name: 'Profil', params: { id_user: userId } }"
+    <router-link :to="{ name: 'Acceuil' }" class="home_text"
+      >Acceuil</router-link
+    >
+    <router-link
+      :to="{ name: 'Acceuil' }"
+      class="home_icon"
+      aria-label="Acceuil"
+      ><i class="fas fa-home" aria-hidden="true"></i
+    ></router-link>
+
+    <router-link
+      :to="{ name: 'Profil', params: { id_user: userId } }"
+      class="profile"
       >Profil</router-link
     >
-    <router-link @click="logout" :to="{ name: 'Login' }"
+    <router-link @click="logout" :to="{ name: 'Login' }" class="logout_text"
       >Déconnexion</router-link
     >
+    <router-link
+      @click="logout"
+      :to="{ name: 'Login' }"
+      aria-label="Déconnexion"
+      class="logout_icon"
+      ><i class="fas fa-sign-out-alt" aria-hidden="true"></i
+    ></router-link>
 
     <router-link
       :to="{ name: 'Profil', params: { id_user: userId } }"
@@ -60,23 +78,63 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 150px;
+  margin-right: 0.5em;
 }
 a {
   color: white;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 1.5em;
 }
 p {
   margin: 0;
 }
 .logo {
-  height: 150px;
+  height: 120px;
 }
 
 .avatar {
-  height: 100px;
-  margin: 5px;
-  border-radius: 20px;
+  height: 80px;
+
+  border-radius: 1.5em;
+}
+
+.logout_icon {
+  display: none;
+}
+
+.home_icon {
+  display: none;
+}
+
+@media only screen and (max-width: 700px) {
+  .logout_icon {
+    display: block;
+    font-size: 2em;
+  }
+  .logout_text {
+    display: none;
+  }
+  .home_icon {
+    display: block;
+    font-size: 2em;
+  }
+  .home_text {
+    display: none;
+  }
+  .profile {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .logo {
+    height: 100px;
+  }
+
+  .avatar {
+    height: 60px;
+
+    border-radius: 1.5em;
+  }
 }
 </style>

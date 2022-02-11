@@ -19,7 +19,7 @@
         <a
           @click.prevent="toggleEditComment"
           href="#"
-          v-if="myComment && isActive"
+          v-if="myComment"
           class="blue"
           ><i class="fas fa-edit"></i
         ></a>
@@ -79,7 +79,7 @@ export default {
         });
         this.editCommentMode = false;
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
 
@@ -90,7 +90,7 @@ export default {
           id_publication: this.comment.pub_id,
         });
       } catch (err) {
-        console.log(err.response);
+        this.$router.push({ name: "Error", params: { error: err } });
       }
     },
   },
@@ -100,9 +100,7 @@ export default {
         return this.comment.date_created;
       } else return "Modifié à " + this.comment.date_modified;
     },
-    isActive() {
-      return this.$store.state.user.is_active;
-    },
+    
     isAdmin() {
       return this.$store.state.user.is_admin;
     },

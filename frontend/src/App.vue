@@ -36,7 +36,7 @@ export default {
 }
 
 body {
-  margin: 0;
+  margin: 0 0 1em 0;
 }
 figure {
   margin: 0;
@@ -44,7 +44,7 @@ figure {
 label {
   font-family: var(--main-police);
   color: var(--main-blue-color);
-  font-size: 24px;
+  font-size: 1.5em;
   text-align: center;
   font-weight: bold;
 }
@@ -53,7 +53,7 @@ textarea {
 }
 
 input {
-  margin: 5px 0 25px 0;
+  margin: 0.3125em 0 1.5em 0;
 }
 h1 {
   font-family: var(--main-police);
@@ -70,7 +70,7 @@ p {
 }
 
 *:focus {
-  outline: 5px solid var(--main-lightblue-color);
+  outline: 0.3125em solid var(--main-lightblue-color);
 }
 .blue {
   color: var(--main-blue-color);
@@ -80,32 +80,32 @@ p {
 }
 .button_blue {
   color: white;
-  padding: 10px;
-  font-size: 20px;
+  padding: 0.625em;
+  font-size: 1.25em;
   background-color: var(--main-blue-color);
   border: var(--main-blue-color);
-  border-radius: 10px;
-  margin: 20px;
-  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+  border-radius: 0.625em;
+  margin: 1.25em;
+  box-shadow: 0 0.3125em 1em 0 rgba(0, 0, 0, 0.63);
   transition: box-shadow;
 }
 .button_blue:hover {
-  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.801);
+  box-shadow: 0 0.5em 0.3125em 0 rgba(0, 0, 0, 0.801);
 }
 
 .button_red {
   color: white;
-  padding: 10px;
-  font-size: 20px;
+  padding: 0.625em;
+  font-size: 1.25em;
   background-color: red;
   border: var(--main-blue-color);
-  border-radius: 10px;
-  margin: 20px;
-  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+  border-radius: 0.625em;
+  margin: 1.25em;
+  box-shadow: 0 0.3125em 1em 0 rgba(0, 0, 0, 0.63);
   transition: box-shadow;
 }
 .button_red:hover {
-  box-shadow: 0px 8px 5px 0px rgba(0, 0, 0, 0.801);
+  box-shadow: 0 0.5em 0.3125em 0 rgba(0, 0, 0, 0.801);
 }
 #app {
   -webkit-font-smoothing: antialiased;
@@ -122,7 +122,7 @@ a {
 }
 
 .nav {
-  margin-bottom: 40px;
+  margin-bottom: 2.5em;
 }
 
 .error {

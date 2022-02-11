@@ -3,10 +3,7 @@
     <div class="menu">
       <button
         v-show="
-          this.currentUser.is_admin &&
-          this.user.is_active &&
-          !editInfo &&
-          !editAvatar
+          currentUser.is_admin && user.is_active && !editInfo && !editAvatar
         "
         @click="deactivateUser"
         class="button_red"
@@ -15,10 +12,7 @@
       </button>
       <button
         v-show="
-          this.currentUser.is_admin &&
-          !this.user.is_active &&
-          !editInfo &&
-          !editAvatar
+          currentUser.is_admin && !user.is_active && !editInfo && !editAvatar
         "
         @click="activateUser"
         class="button_blue"
@@ -26,16 +20,14 @@
         Résactiver l'utilisateur
       </button>
       <button
-        v-show="
-          avatarEditMode && this.user.is_active && !editInfo && !editAvatar
-        "
+        v-show="avatarEditMode && user.is_active && !editInfo && !editAvatar"
         @click="toggleEditAvatar"
         class="button_blue"
       >
         Changer d'avatar
       </button>
       <button
-        v-show="infoEditMode && this.user.is_active && !editInfo && !editAvatar"
+        v-show="infoEditMode && user.is_active && !editInfo && !editAvatar"
         @click="toggleEditInfo"
         class="button_blue"
       >
@@ -47,7 +39,7 @@
       <figure v-show="!editAvatar">
         <img :src="user.avatar" alt="Photo de profil" class="avatar" />
       </figure>
-
+      <p class="error">{{ this.avatarErrorMsg }}</p>
       <form
         v-show="editAvatar"
         @submit.prevent="submitAvatar"
@@ -80,7 +72,7 @@
       <p v-show="!editInfo">
         {{ this.user.bio }}
       </p>
-      <p class="error">{{ this.errorMsg }}</p>
+      <p class="error">{{ this.infoErrorMsg }}</p>
       <form v-show="editInfo" @submit.prevent="submitInfo" id="info">
         <label for="pseudo">Pseudo :</label>
         <input id="pseudo" type="text" :value="user.pseudo" />
@@ -111,27 +103,42 @@ export default {
       myProfile: false,
       editAvatar: false,
       editInfo: false,
-      errorMsg: "",
+      infoErrorMsg: "",
+      avatarErrorMsg: "",
     };
   },
   methods: {
-    activateUser() {
-      if (!this.currentUser.is_admin) {
-        return;
+    async activateUser() {
+      try {
+        if (!this.currentUser.is_admin) {
+          return;
+        }
+        const response = await apiHandler.toggleActivateUser(
+          1,
+          this.user.id_user
+        );
+        if (response.statusText != "OK") {
+          throw response;
+        }
+      } catch (err) {
+        this.$router.push({ name: "Error", params: { error: err } });
       }
-      this.$store.dispatch("toggleActivateUser", {
-        status: 1,
-        id: this.user.id_user,
-      });
     },
-    deactivateUser() {
-      if (!this.currentUser.is_admin) {
-        return;
+    async deactivateUser() {
+      try {
+        if (!this.currentUser.is_admin) {
+          return;
+        }
+        const response = await apiHandler.toggleActivateUser(
+          0,
+          this.user.id_user
+        );
+        if (response.statusText != "OK") {
+          throw response;
+        }
+      } catch (err) {
+        this.$router.push({ name: "Error", params: { error: err } });
       }
-      this.$store.dispatch("toggleActivateUser", {
-        status: 0,
-        id: this.user.id_user,
-      });
     },
 
     toggleEditAvatar() {
@@ -145,6 +152,7 @@ export default {
     cancelEdit() {
       this.editAvatar = false;
       this.editInfo = false;
+      (this.infoErrorMsg = ""), (this.avatarErrorMsg = "");
     },
 
     async submitInfo() {
@@ -166,7 +174,7 @@ export default {
       } catch (err) {
         if (err.response.status == 500 && err.response.data.errno == 1062) {
           const field = err.response.data.sqlMessage.split("'")[3];
-          this.errorMsg = field + " déjà utilisé";
+          this.infoErrorMsg = field + " déjà utilisé";
         } else {
           this.$router.push({ name: "Error", params: { error: err } });
         }
@@ -188,14 +196,30 @@ export default {
         });
         this.editAvatar = false;
       } catch (err) {
-        console.log(err.response);
+        if (err.response.status == 500 && err.response.data.startsWith("<")) {
+          this.avatarErrorMsg = "Fichiers image jpg, jpeg, png seulement";
+        } else {
+          this.$router.push({ name: "Error", params: { error: err } });
+        }
       }
     },
   },
   created: async function () {
     try {
-      if (!this.$store.state.isLogged || !this.$store.state.user) {
+      if (!this.isLogged) {
         this.$router.push({ name: "Login" });
+        return;
+      }
+
+      if (!this.currentUser.is_active) {
+        this.$router.push({
+          name: "Error",
+          params: {
+            error:
+              "Votre compte a été désactivé veuillez contacter un administrateur!",
+          },
+        });
+        return;
       }
 
       if (this.id_user == this.$store.state.user.id_user) {
@@ -208,16 +232,28 @@ export default {
         this.user = response.data;
       }
     } catch (err) {
-      console.log(err.response);
+      this.$router.push({ name: "Error", params: { error: err } });
     }
   },
   async updated() {
     try {
-      if (!this.$store.state.isLogged || !this.$store.state.user) {
+      if (!this.isLogged) {
         this.$router.push({ name: "Login" });
+        return;
       }
 
-      if (this.id_user == this.$store.state.user.id_user) {
+      if (!this.currentUser.is_active) {
+        this.$router.push({
+          name: "Error",
+          params: {
+            error:
+              "Votre compte a été désactivé veuillez contacter un administrateur!",
+          },
+        });
+        return;
+      }
+
+      if (this.id_user == this.currentUser.id_user) {
         this.user = this.currentUser;
       } else {
         const response = await apiHandler.getUser(this.id_user);
@@ -227,12 +263,17 @@ export default {
         this.user = response.data;
       }
     } catch (err) {
-      console.log(err.response);
+      this.$router.push({ name: "Error", params: { error: err } });
     }
   },
+
   computed: {
     currentUser() {
       return this.$store.state.user;
+    },
+
+    isLogged() {
+      return this.$store.state.isLogged;
     },
 
     avatarEditMode() {
@@ -263,7 +304,7 @@ export default {
 .menu {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 #avatar_picture {
   display: flex;
