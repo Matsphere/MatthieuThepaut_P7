@@ -70,15 +70,37 @@ export default {
   align-items: center;
 }
 .logo {
-  width: 300px;
+  width: 18.75em;
 }
 
 .form {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 40%;
+}
+input {
+  width: 45%;
 }
 a {
   color: #134b98;
   font-weight: bold;
+}
+
+@media only screen and (max-width: 1200px) {
+  .form {
+    width: 55%;
+  }
+}
+@media only screen and (max-width: 900px) {
+  .form {
+    width: 65%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .form {
+    width: 100%;
+  }
 }
 </style>

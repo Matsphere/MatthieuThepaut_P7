@@ -12,9 +12,9 @@
             id="avatar"
           />
         </figure>
-        <p>{{ this.comment.pseudo }}</p>
+        <p class="author_pseudo">{{ this.comment.pseudo }}</p>
       </router-link>
-      <p>{{ this.date }}</p>
+      <p class="date">{{ this.date }}</p>
       <div>
         <a
           @click.prevent="toggleEditComment"
@@ -71,7 +71,7 @@ export default {
 
     async editComment() {
       try {
-        if(!this.text) return
+        if (!this.text) return;
         await this.$store.dispatch("editComment", {
           comment: this.text,
           id_comment: this.comment.id_comment,
@@ -98,9 +98,9 @@ export default {
     date() {
       if (this.comment.date_created == this.comment.date_modified) {
         return this.comment.date_created;
-      } else return "Modifié à " + this.comment.date_modified;
+      } else return "*" + this.comment.date_modified;
     },
-    
+
     isAdmin() {
       return this.$store.state.user.is_admin;
     },
@@ -118,30 +118,36 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .comment {
-  border: 2px solid;
-  margin: 5px;
-  padding: 10px;
-  border-radius: 20px;
+  border: 0.125em solid;
+  margin: 0.3125em;
+  padding: 0.625em;
+  border-radius: 1.25em;
 }
 .menu {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .author {
   display: flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 1em;
   font-weight: bold;
 }
+.date {
+  font-size: 0.9em;
+  margin: auto 1em;
+  order: 2;
+}
 .red {
-  font-size: 25px;
-  margin: 10px;
+  font-size: 1rem;
+  margin: 0.625em;
 }
 .blue {
-  font-size: 25px;
-  margin: 10px;
+  font-size: 1rem;
+  margin: 0.625em;
 }
 #form_comment {
   display: flex;
@@ -149,13 +155,13 @@ export default {
   align-items: center;
 }
 #text {
-  height: 150px;
+  height: 9.375em;
   width: 100%;
 }
 
 #avatar {
-  height: 50px;
-  margin: 5px 20px 5px 5px;
-  border-radius: 20px;
+  height: 3.125em;
+  margin: 0.3125em 1.25em 0.3125em 0.3125em;
+  border-radius: 1.25em;
 }
 </style>

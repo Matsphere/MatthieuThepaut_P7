@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app_cont">
     <NavBar
       v-if="user"
       :userId="user.id_user"
@@ -36,7 +36,7 @@ export default {
 }
 
 body {
-  margin: 0 0 1em 0;
+  margin: 0;
 }
 figure {
   margin: 0;
@@ -110,6 +110,10 @@ p {
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.app_cont {
+  width: 100%;
 }
 
 a {

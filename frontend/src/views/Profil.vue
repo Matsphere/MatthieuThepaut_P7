@@ -6,7 +6,7 @@
           currentUser.is_admin && user.is_active && !editInfo && !editAvatar
         "
         @click="deactivateUser"
-        class="button_red"
+        class="button_red deactivate button_menu"
       >
         Désactiver l'utilisateur
       </button>
@@ -15,21 +15,21 @@
           currentUser.is_admin && !user.is_active && !editInfo && !editAvatar
         "
         @click="activateUser"
-        class="button_blue"
+        class="button_blue button_menu"
       >
         Résactiver l'utilisateur
       </button>
       <button
         v-show="avatarEditMode && user.is_active && !editInfo && !editAvatar"
         @click="toggleEditAvatar"
-        class="button_blue"
+        class="button_blue button_menu"
       >
         Changer d'avatar
       </button>
       <button
         v-show="infoEditMode && user.is_active && !editInfo && !editAvatar"
         @click="toggleEditInfo"
-        class="button_blue"
+        class="button_blue button_menu"
       >
         Modifier mon profil
       </button>
@@ -297,15 +297,24 @@ export default {
 
 <style scoped>
 .profile {
-  width: 80%;
-  margin: auto;
+  width: 100%;
 }
 
 .menu {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
+.deactivate {
+  order: 2;
+}
+
+.button_menu {
+  margin: 1em;
+  font-size: 1em;
+}
+
 #avatar_picture {
   display: flex;
   flex-direction: column;
@@ -313,8 +322,8 @@ export default {
 }
 
 .avatar {
-  height: 300px;
-  border-radius: 40px;
+  height: 15.625em;
+  border-radius: 2.5em;
 }
 
 #user_info {
@@ -332,7 +341,23 @@ export default {
 }
 
 #bio {
-  width: 50%;
-  height: 300px;
+  width: 60%;
+  height: 18.75em;
+}
+
+#pseudo {
+  width: 15.625em;
+}
+
+@media only screen and (max-width: 900px) {
+  #bio {
+    width: 75%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #bio {
+    width: 90%;
+  }
 }
 </style>

@@ -69,11 +69,35 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
+  width: 100%;
 }
 #text {
-  margin: 20px 0;
-  width: 100%;
-  height: 300px;
+  margin: 1.25em 0;
+  width: 50%;
+  height: 18.75em
+}
+
+#title {
+  width: 40%;
+}
+
+@media only screen and (max-width: 900px) {
+  #text {
+    width: 65%;
+  }
+
+  #title {
+    width: 55%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #text {
+    width: 80%;
+  }
+
+  #title {
+    width: 70%;
+  }
 }
 </style>

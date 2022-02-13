@@ -72,13 +72,14 @@ export default {
   align-items: center;
   justify-content: space-between;
   background-color: #134b98;
+  width: 100%;
 }
 
 .nav_user {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-right: 0.5em;
+  margin-right: 0.8em;
 }
 a {
   color: white;
@@ -89,11 +90,11 @@ p {
   margin: 0;
 }
 .logo {
-  height: 120px;
+  height: 7.5em;
 }
 
 .avatar {
-  height: 80px;
+  height: 5em;
 
   border-radius: 1.5em;
 }
@@ -128,11 +129,11 @@ p {
 
 @media only screen and (max-width: 450px) {
   .logo {
-    height: 100px;
+    height: 6.25em;
   }
 
   .avatar {
-    height: 60px;
+    height: 3.75em;
 
     border-radius: 1.5em;
   }

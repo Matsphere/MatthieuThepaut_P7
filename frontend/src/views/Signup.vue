@@ -113,7 +113,7 @@ export default {
   align-items: center;
 }
 .logo {
-  width: 300px;
+  width: 18.75em;
 }
 
 .form {

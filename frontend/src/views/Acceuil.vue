@@ -34,8 +34,8 @@ export default {
       return this.$store.state.user;
     },
     isLogged() {
-      return this.$store.state.isLogged
-    }
+      return this.$store.state.isLogged;
+    },
   },
 
   created: async function () {
@@ -43,10 +43,15 @@ export default {
       if (!this.isLogged) {
         this.$router.push({ name: "Login" });
       } else if (!this.user.is_active) {
-        this.$router.push({ name: "Error", params : {error : 'Votre compte a été désactivé veuillez contacter un administrateur!'} });
-      }
-       else {
-      await this.$store.dispatch("getAllPublications");
+        this.$router.push({
+          name: "Error",
+          params: {
+            error:
+              "Votre compte a été désactivé veuillez contacter un administrateur!",
+          },
+        });
+      } else {
+        await this.$store.dispatch("getAllPublications");
       }
     } catch (err) {
       if (err.response.status == 401) {
@@ -62,8 +67,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 80%;
-  margin: auto;
+  width: 100%;
 }
 
 .publications {

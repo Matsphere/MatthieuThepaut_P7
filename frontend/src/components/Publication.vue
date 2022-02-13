@@ -14,7 +14,7 @@
         </figure>
         <p>{{ this.publication.pseudo }}</p>
       </router-link>
-      <p>{{ this.date }}</p>
+      <p class="date">{{ this.date }}</p>
       <div>
         <a
           class="blue"
@@ -53,7 +53,7 @@
     </form>
     <div class="underline"></div>
     <div class="reaction">
-      <div>
+      <div class="likes">
         <a
           v-show="!isLiked"
           href="#"
@@ -97,9 +97,13 @@
         <span>{{ this.dislikes }}</span>
       </div>
 
-      <p>{{ this.publication.comments_number }} commentaires</p>
+      <p class="comment_number">
+        {{ this.publication.comments_number }} commentaires
+      </p>
 
-      <button @click="displayComments" class="button_blue">Commenter</button>
+      <button @click="displayComments" class="button_blue comment_button">
+        Commenter
+      </button>
     </div>
     <div class="underline" v-if="commentOn"></div>
     <div v-if="commentOn">
@@ -267,7 +271,7 @@ export default {
     date() {
       if (this.publication.date_created == this.publication.date_modified) {
         return this.publication.date_created;
-      } else return "Modifiée à " + this.publication.date_modified;
+      } else return "*" + this.publication.date_modified;
     },
     isActive() {
       return this.$store.state.user.is_active;
@@ -315,18 +319,19 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .publication {
-  margin: 30px auto;
-  padding: 20px;
+  margin: 1.875em auto;
+  padding: 1.25em;
   width: 60%;
-  border: 1px solid #81a7be;
-  border-radius: 20px;
-  box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.63);
+  border: 0.0625em solid #81a7be;
+  border-radius: 1.25em;
+  box-shadow: 0 0.3125em 1em 0 rgba(0, 0, 0, 0.63);
 }
 
 .menu {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .author {
   display: flex;
@@ -336,14 +341,14 @@ export default {
 }
 
 .avatar {
-  margin: 10px;
-  height: 100px;
-  border-radius: 20px;
+  margin: 0.625em;
+  height: 6.25em;
+  border-radius: 1.25em;
 }
 .underline {
-  border: 1px solid #fd2d01;
+  border: 0.0625em solid #fd2d01;
   width: 80%;
-  margin: 10px auto;
+  margin: 0.625em auto;
 }
 #article {
   display: flex;
@@ -351,13 +356,14 @@ export default {
   align-items: center;
 }
 #text {
-  width: 60%;
-  height: 300px;
+  width: 80%;
+  height: 18.75em;
 }
 .reaction {
-  width: 80%;
-  margin: 10px auto;
+  width: 70%;
+  margin: 0.625em auto;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
@@ -368,15 +374,15 @@ export default {
 }
 #comment {
   width: 80%;
-  height: 100px;
+  height: 6.25em;
 }
 .blue {
-  margin: 15px;
-  font-size: 20px;
+  margin: 0.5em;
+  font-size: 1.25rem;
 }
 .red {
-  margin: 15px;
-  font-size: 20px;
+  margin: 0.5em;
+  font-size: 1.25rem;
 }
 
 .disabled {
@@ -384,6 +390,42 @@ export default {
   color: lightgrey;
 }
 span {
-  margin: 5px;
+  margin: 0.3125em;
+}
+
+.comment_number {
+  margin: 0.5em;
+}
+
+.likes {
+  margin: 0.5em;
+}
+.comment_button {
+  margin: 0.5em;
+}
+
+.date {
+  margin: 0 0.8em;
+  font-size: 0.9em;
+}
+
+@media only screen and (max-width: 1200px) {
+  .publication {
+    width: 77%;
+  }
+}
+@media only screen and (max-width: 900px) {
+  .publication {
+    width: 85%;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .reaction {
+    flex-direction: column;
+  }
+  #new_comment {
+    flex-direction: column;
+  }
 }
 </style>
