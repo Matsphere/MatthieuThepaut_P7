@@ -1,14 +1,14 @@
 <template>
   <div class="nav">
-    <figure class="logo">
-      <router-link :to="{ name: 'Acceuil' }">
+    <router-link :to="{ name: 'Acceuil' }" class="logo_cont">
+      <figure>
         <img
-          src="assets/icon-above-font.png"
+          src="assets/icon-left-font-monochrome-white.png"
           alt="Logo Groupomania"
           class="logo"
         />
-      </router-link>
-    </figure>
+      </figure>
+    </router-link>
     <router-link :to="{ name: 'Acceuil' }" class="home_text"
       >Acceuil</router-link
     >
@@ -80,6 +80,7 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-right: 0.8em;
+  font-size: 1em;
 }
 a {
   color: white;
@@ -90,7 +91,11 @@ p {
   margin: 0;
 }
 .logo {
-  height: 7.5em;
+  height: 6.5em;
+  margin: 0.6em;
+}
+.logo_cont {
+  font-size: 1em;
 }
 
 .avatar {
@@ -129,11 +134,11 @@ p {
 
 @media only screen and (max-width: 450px) {
   .logo {
-    height: 6.25em;
+    height: 100px;
   }
 
   .avatar {
-    height: 3.75em;
+    height: 60px;
 
     border-radius: 1.5em;
   }

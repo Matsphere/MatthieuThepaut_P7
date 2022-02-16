@@ -6,8 +6,8 @@ const userRoutes = require("./routes/user");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 // const helmet = require("helmet");
-// const morgan = require("morgan");
-// const clean = require("xss-clean");
+
+const clean = require("xss-clean");
 
 const app = express();
 connection.connect(function (err) {
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
-
+app.use(clean());
 app.use(cookieParser());
 app.use(express.json());
 app.use("/api/publications", publicationsRoutes);

@@ -37,6 +37,7 @@ export default {
 
 body {
   margin: 0;
+  max-width: 1600px;
 }
 figure {
   margin: 0;

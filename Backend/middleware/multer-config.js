@@ -10,7 +10,7 @@ const imageFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image") && MIME_TYPES[file.mimetype]) {
     cb(null, true);
   } else {
-    return cb("Fichiers image jpg, jpeg, png seulement", false);
+    cb("Fichiers image jpg, jpeg, png seulement", false);
   }
 };
 
@@ -20,7 +20,8 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, callback) => {
-    const name = file.originalname.split(" ").join("_");
+    const name = file.originalname.split(" ").join("_").split(".")[0];
+
     const extension = MIME_TYPES[file.mimetype];
     callback(null, name + Date.now() + "." + extension);
   },

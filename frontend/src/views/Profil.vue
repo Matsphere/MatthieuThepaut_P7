@@ -1,4 +1,4 @@
-<template>
+<template v-if="isLogged">
   <div class="profile">
     <div class="menu">
       <button
